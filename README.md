@@ -34,7 +34,7 @@ call its cloud self — and the replacement progress ticks up in the corner
 the whole time. When you're convinced, run `replace-me doctor` — it tells
 you exactly what your real setup is missing.
 
-![demo: the avatar answering "can someone fix the login bug" while the replacement progress reads 4.8 %](docs/demo.jpg)
+![demo: a scripted meeting — the avatar reacts, quips, and the replacement progress climbs](docs/demo.gif)
 
 ## What the replacement can do
 
