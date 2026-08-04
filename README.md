@@ -20,6 +20,15 @@ it does.
 > Disclaimer: I am of course not encouraging anyone to be replaced at
 > work by a pink-haired SVG. The thought never even crossed my mind.
 
+This is it running for real — a local Qwen3-4B (served by
+[brainscope](https://github.com/moudrkat/brainscope), so its thoughts
+were being watched the whole time) improvising replies, the room asking
+it to fix a bug, the consent click, the brief handed to the agent
+session, and the "PR sent" report coming back as the replacement
+progress ticks up:
+
+![live demo: unscripted replies from a local model, consent click, handoff, and the PR report coming back](docs/demo-real.gif)
+
 ## See it move in 60 seconds
 
 No mic, no model, no config:
