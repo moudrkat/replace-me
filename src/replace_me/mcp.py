@@ -17,6 +17,7 @@ presence.
 import asyncio
 import json
 import os
+from pathlib import Path
 import time
 
 import aiohttp
@@ -149,6 +150,7 @@ async def room_report(text: str, seconds: float = 25.0) -> str:
     if not ok:
         return f"Failed: {body}"
     career.log("handoff_done", text)
+    await _post("/state", {"progress": career.progress()})  # bar moves on camera
     return f"Reported. Career file updated — replacement progress {career.progress():g} %."
 
 
@@ -186,6 +188,7 @@ async def room_look() -> str:
 
 
 def main() -> None:
+    load_dotenv(Path.cwd() / ".env")
     load_dotenv()
     mcp.run()
 

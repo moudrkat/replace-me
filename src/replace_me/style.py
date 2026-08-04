@@ -96,6 +96,7 @@ def main() -> None:
         parser.error(f"{args.photo} does not exist")
     from dotenv import load_dotenv
 
+    load_dotenv(Path.cwd() / ".env")
     load_dotenv()
     try:
         colors = asyncio.run(extract(args.photo))

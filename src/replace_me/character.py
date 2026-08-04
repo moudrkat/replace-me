@@ -102,8 +102,8 @@ _DEFAULT_SILENCE_DETECTOR = r"\(?\s*silent\s*\)?|nothing to (add|say)"
 # --- handoff: the local brain asks the room, then briefs the big brain ---
 
 _DEFAULT_HANDOFF_CUES = (
-    r"\b(write|fix|implement|build|refactor|commit|deploy|debug|"
-    r"investigate|create)\b"
+    r"\b(write|fix|implement|build|refactor|debug|"
+    r"investigate|automate|create)\b"
 )
 
 _DEFAULT_HANDOFF_ASK = (

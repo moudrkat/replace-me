@@ -5,6 +5,7 @@ nothing, sends nothing anywhere except one ping to your own model URL.
 
 import asyncio
 import os
+from pathlib import Path
 import shutil
 import socket
 import subprocess
@@ -32,6 +33,7 @@ async def _ping_llm() -> str | None:
 def main() -> None:
     from dotenv import load_dotenv
 
+    load_dotenv(Path.cwd() / ".env")
     load_dotenv()
     healthy = True
 

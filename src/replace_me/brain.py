@@ -422,6 +422,7 @@ async def run(chatty: bool, observed: bool) -> None:
 
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(name)s: %(message)s")
+    load_dotenv(Path.cwd() / ".env")
     load_dotenv()
     observed = "--observed" in sys.argv or os.environ.get(
         "REPLACEME_BRAIN_OBSERVED", ""

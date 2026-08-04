@@ -15,6 +15,7 @@ import asyncio
 import json
 import logging
 import os
+from pathlib import Path
 from importlib.resources import files
 
 from aiohttp import WSMsgType, web
@@ -181,16 +182,25 @@ def _routes(face: _Face) -> list[web.RouteDef]:
         return web.json_response({"ok": True})
 
     async def state(request: web.Request) -> web.Response:
-        """The brain reports meeting/consent state; every face mirrors it."""
+        """The brain reports meeting/consent state; every face mirrors it.
+        Partial updates merge with the cached state, so a progress-only
+        post (e.g. from room_report) never clobbers an open consent
+        panel."""
         try:
             data = await request.json()
         except json.JSONDecodeError:
             return web.json_response({"error": "bad json"}, status=400)
+        current = face.state or {
+            "meeting": False, "pending_handoff": False,
+            "progress": 0.0, "buttons": True,
+        }
         face.state = {
-            "meeting": bool(data.get("meeting")),
-            "pending_handoff": bool(data.get("pending_handoff")),
-            "progress": float(data.get("progress") or 0.0),
-            "buttons": bool(data.get("buttons", True)),
+            "meeting": bool(data.get("meeting", current["meeting"])),
+            "pending_handoff": bool(
+                data.get("pending_handoff", current["pending_handoff"])
+            ),
+            "progress": float(data.get("progress", current["progress"]) or 0.0),
+            "buttons": bool(data.get("buttons", current["buttons"])),
         }
         await face.send({"kind": "state", **face.state})
         return web.json_response({"ok": True})
@@ -241,6 +251,7 @@ def run() -> None:
     import tempfile
 
     logging.basicConfig(level=logging.INFO, format="%(name)s: %(message)s")
+    load_dotenv(Path.cwd() / ".env")
     load_dotenv()
     if "doctor" in sys.argv[1:]:
         from replace_me import doctor

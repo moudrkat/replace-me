@@ -66,6 +66,13 @@
     margin-top:4px; overflow:hidden; }
   #careerfill { height:100%; width:0%; background:var(--hair, #e87faf);
     transition:width 1.2s ease; }
+  /* the bar celebrates when the replacement gets closer to the job */
+  #career.tick { animation: careertick 1.6s ease; }
+  @keyframes careertick {
+    0% { transform:scale(1); filter:brightness(1); }
+    25% { transform:scale(1.18); filter:brightness(1.6); }
+    100% { transform:scale(1); filter:brightness(1); }
+  }
   #bubble::after { content:""; position:absolute; left:-14px; bottom:22px;
     border:12px solid transparent; border-right-color:#f4f5f7;
     border-left-width:0; }
@@ -230,9 +237,18 @@
     $("#btnEnd").style.display = uiState.meeting ? "" : "none";
     $("#consent").className = uiState.pending_handoff ? "show" : "";
     if (typeof uiState.progress === "number") {
-      $("#career").className = "show";
+      const career = $("#career");
+      const moved = career.dataset.progress
+        && career.dataset.progress !== String(uiState.progress);
+      career.dataset.progress = String(uiState.progress);
+      career.className = "show";
       $("#careerval").textContent = uiState.progress.toFixed(1) + " %";
       $("#careerfill").style.width = Math.min(uiState.progress, 100) + "%";
+      if (moved) {  // pulse exactly once per change
+        career.classList.remove("tick");
+        void career.offsetWidth;
+        career.classList.add("tick");
+      }
     }
   }
   function uiAction(action, btn) {

@@ -134,7 +134,7 @@ Describe briefly and factually what is in this meeting-room camera frame: how ma
 
 ## Handoff cues
 
-\b(write|fix|implement|build|refactor|commit|deploy|debug|investigate|create)\b
+\b(write|fix|implement|build|refactor|debug|investigate|automate|create)\b
 
 ## Handoff ask
 
