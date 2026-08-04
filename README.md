@@ -98,7 +98,7 @@ authority and knows it. You read the minutes afterwards. Attendance
 without presence: the reverse of most meetings, where people manage
 presence without attendance.
 
-## Privacy, honestly
+## Privacy, plainly
 
 | What | Where it goes |
 |---|---|
@@ -109,7 +109,7 @@ presence without attendance.
 | handoff briefs | your attached agent session, after the room says yes |
 | raw transcript via MCP | full-presence mode only; `REPLACEME_PRIVATE=1` **enforces** briefs-only (and refuses camera captions too — the camera looks at the meeting) |
 
-One honest footnote: "local model" means **whatever `REPLACEME_LLM_URL`
+One footnote that matters: "local model" means **whatever `REPLACEME_LLM_URL`
 points at**. Every guarantee above assumes that's your machine or your
 LAN. Point it at a cloud API and the frames, context, and minutes follow
 the URL — the code won't stop you, so the .env is where this promise is
@@ -140,7 +140,7 @@ works the same way (vLLM, llama.cpp, LM Studio, brainscope). Text-only
 backend? `REPLACEME_LLM_VISION=0` and the character admits to being blind
 instead of hallucinating a camera. A 4B-class model on a plain CPU is
 enough for banter and minutes; it just thinks for a few seconds first,
-which honestly fits the character.
+which plainly fits the character.
 
 ## Make it yours
 
@@ -197,7 +197,7 @@ embarrassing.
 
 Design the replacement. Read its mind. Checkmate.
 
-## Honest limitations
+## Known limitations
 
 - Born on Linux: mic capture goes through PulseAudio/PipeWire. On macOS
   the demo, face, and MCP server work, but the ears need an ffmpeg
