@@ -6,10 +6,13 @@
 So here it is: my replacement, under construction, MIT licensed so you
 can build yours too. An avatar that sits in your meetings as a face on a
 screen. It is not ready to replace anyone yet — for now it listens, makes
-faces, drops one dry remark per hour, takes the minutes, and when the
-room asks it to actually do something, it politely checks whether it may
-hand the task to a bigger brain. Which, to be fair, is already more
-process than some colleagues follow.
+faces, comments as often as you dare (from a dry remark when addressed up
+to `--chatty`, which is exactly as annoying as it sounds), takes the
+minutes, and when the room asks it to actually do something, it politely
+checks whether it may hand the task to a bigger brain. Which, to be fair,
+is already more process than some colleagues follow. And the entire
+personality is one markdown file: swap the file, get a different
+colleague. No code.
 
 Fully local by default: microphone → [faster-whisper](https://github.com/SYSTRAN/faster-whisper)
 on your CPU, an animated SVG face served on `localhost`, and any
@@ -82,12 +85,20 @@ claude mcp add replace-me replace-me-mcp
 
 ## Make it yours
 
-Copy `characters/example.md` to `CHARACTER.md` and edit: name, wake
-words, voice, face colors, button labels, the whole personality — system
-prompt, tone examples, reflex rules, every bubble and every cue regex
-(`## Handoff cues`, `## Meeting start cues`, ...) live in that one file.
+Copy `characters/example.md` to `CHARACTER.md` and edit. That one file is
+the whole personality, and the example lists **every** knob with its
+default: name, wake words, voice, face colors, button labels, system
+prompt, tone examples, reflex rules, every bubble and every cue regex.
+Delete any section you don't care about — built-in defaults cover it.
 Different language? Set `language:` (whisper + prompts follow). The
 engine never needs a fork to host someone else.
+
+Lazy mode: tell your agent session to do it. "Open CHARACTER.md and make
+her 20% more dramatic" is a perfectly valid workflow — the file is plain
+markdown, and the operator stays in the loop. (The avatar deliberately
+cannot rewrite itself from room speech: the transcript carries no speaker
+identity, and a colleague who can be reprogrammed by anyone within mic
+range is not a colleague, it's a vulnerability.)
 
 The character file format is shared with
 [paralel-discordverse](https://github.com/moudrkat/paralel-discordverse) —
