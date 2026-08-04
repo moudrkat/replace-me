@@ -159,6 +159,9 @@ Design the replacement. Read its mind. Checkmate.
 
 ## Honest limitations
 
+- Born on Linux: mic capture goes through PulseAudio/PipeWire. On macOS
+  the demo, face, and MCP server work, but the ears need an ffmpeg
+  avfoundation tweak in `ears.py` — a good first PR, hint hint.
 - No speaker diarization: whisper hears words, not people. Minutes name
   someone only if the room said the name out loud.
 - The mic + small-model combo mishears things. I consider this a feature:
