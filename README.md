@@ -30,8 +30,11 @@ replace-me --demo        # then open http://127.0.0.1:8765/ fullscreen
 ```
 
 A scripted meeting plays out: the face listens, reacts, quips, offers to
-call its cloud self. When you're convinced, run `replace-me doctor` — it
-tells you exactly what your real setup is missing.
+call its cloud self — and the replacement progress ticks up in the corner
+the whole time. When you're convinced, run `replace-me doctor` — it tells
+you exactly what your real setup is missing.
+
+![demo: the avatar answering "can someone fix the login bug" while the replacement progress reads 4.8 %](docs/demo.jpg)
 
 ## What the replacement can do
 

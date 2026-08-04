@@ -224,7 +224,7 @@
   let uiState = null;
   function applyState() {
     if (!uiState) return;
-    $("#controls").className = "show";
+    $("#controls").className = uiState.buttons === false ? "" : "show";
     $("#btnStart").style.display = uiState.meeting ? "none" : "";
     $("#btnMinutes").style.display = uiState.meeting ? "" : "none";
     $("#btnEnd").style.display = uiState.meeting ? "" : "none";

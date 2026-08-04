@@ -32,8 +32,22 @@ SCRIPT: list[tuple[float, str, str]] = [
 ]
 
 
+async def _post_progress(face, progress: float) -> None:
+    """The career bar fills as the demo meeting proceeds — buttons stay
+    hidden (no brain is running to answer them)."""
+    face.state = {
+        "meeting": False,
+        "pending_handoff": False,
+        "progress": round(progress, 1),
+        "buttons": False,
+    }
+    await face.send({"kind": "state", **face.state})
+
+
 async def run(sink, face) -> None:
     ch = character.get()
+    progress = 0.0
+    await _post_progress(face, progress)
     while True:
         for pause, kind, text in SCRIPT:
             await asyncio.sleep(pause)
@@ -47,4 +61,6 @@ async def run(sink, face) -> None:
             else:
                 transcript.append(text, who=transcript.WHO_AVATAR)
                 await face.send({"kind": "say", "text": text, "seconds": 12})
+            progress += 0.4  # every demo beat brings the takeover closer
+            await _post_progress(face, progress)
         await asyncio.sleep(6)

@@ -190,6 +190,7 @@ def _routes(face: _Face) -> list[web.RouteDef]:
             "meeting": bool(data.get("meeting")),
             "pending_handoff": bool(data.get("pending_handoff")),
             "progress": float(data.get("progress") or 0.0),
+            "buttons": bool(data.get("buttons", True)),
         }
         await face.send({"kind": "state", **face.state})
         return web.json_response({"ok": True})
