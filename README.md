@@ -58,7 +58,13 @@ brain. No cloud account required to get a face that judges your standup.
 | meeting minutes | local files |
 | the avatar's own bubble text | edge-tts (Microsoft) for synthesis — unless `voice:` is empty |
 | handoff briefs | your attached agent session, after the room says yes |
-| raw transcript via MCP | full-presence mode only; `REPLACEME_PRIVATE=1` **enforces** briefs-only |
+| raw transcript via MCP | full-presence mode only; `REPLACEME_PRIVATE=1` **enforces** briefs-only (and refuses camera captions too — the camera looks at the meeting) |
+
+One honest footnote: "local model" means **whatever `REPLACEME_LLM_URL`
+points at**. Every guarantee above assumes that's your machine or your
+LAN. Point it at a cloud API and the frames, transcripts-as-context, and
+minutes follow the URL — the code won't stop you, so the .env is where
+this promise is actually kept.
 
 ## Setup
 

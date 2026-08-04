@@ -91,10 +91,17 @@ async def main() -> None:
     from replace_me import mcp as mcp_server
 
     fn = getattr(mcp_server.room_recent, "fn", mcp_server.room_recent)
+    look = getattr(mcp_server.room_look, "fn", mcp_server.room_look)
     os.environ["REPLACEME_PRIVATE"] = "1"
     private_out = await fn(50)
+    look_out = await look()
     os.environ.pop("REPLACEME_PRIVATE")
     full_out = await fn(50)
+    check(
+        "private mode also gates room_look",
+        "Private mode" in look_out and "caption" in look_out,
+        look_out,
+    )
     check(
         "private mode returns only briefs",
         bool(private_out.strip())

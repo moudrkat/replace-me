@@ -145,7 +145,16 @@ async def room_react(expression: str, seconds: float = 5.0) -> str:
 @mcp.tool()
 async def room_look() -> str:
     """One webcam glance, described by the LOCAL model. Only the caption
-    text ever reaches you — the image itself never leaves the machine."""
+    text ever reaches you — the image itself never leaves the machine.
+
+    In private mode this refuses entirely: the camera looks at the
+    meeting, so its captions are meeting content too.
+    """
+    if _private():
+        return (
+            "Private mode: the camera looks at the meeting, so its captions "
+            "stay on the operator's machine along with the transcript."
+        )
     ok, body = await _post("/look", {})
     if not ok:
         return f"Failed: {body}"
