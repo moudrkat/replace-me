@@ -21,11 +21,15 @@ import time
 
 import aiohttp
 from dotenv import load_dotenv
-from mcp.server.fastmcp import FastMCP
+
+try:  # mcp SDK 1.x
+    from mcp.server.fastmcp import FastMCP as _MCPServer
+except ModuleNotFoundError:  # mcp SDK 2.x renamed it
+    from mcp.server import MCPServer as _MCPServer
 
 from replace_me import transcript
 
-mcp = FastMCP("replace-me")
+mcp = _MCPServer("replace-me")
 
 _cursor = time.time()  # room_listen never replays the past on startup
 

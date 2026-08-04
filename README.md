@@ -1,10 +1,15 @@
 # replace-me
 
-An avatar that sits in your meetings so that, sooner or later, it can
-**replace you at work**. It's not there yet. For now it listens, makes a
-face, drops one dry remark per hour, takes the minutes, and — when the
-room asks it to actually do something — politely checks whether it may
-hand the task to a bigger brain. Which is more than some colleagues do.
+> I will not wait for AI to replace me at work. If AI is going to replace
+> me, **I am the one who will design that replacement.**
+
+So here it is: my replacement, under construction, MIT licensed so you
+can build yours too. An avatar that sits in your meetings as a face on a
+screen. It is not ready to replace anyone yet — for now it listens, makes
+faces, drops one dry remark per hour, takes the minutes, and when the
+room asks it to actually do something, it politely checks whether it may
+hand the task to a bigger brain. Which, to be fair, is already more
+process than some colleagues follow.
 
 Fully local by default: microphone → [faster-whisper](https://github.com/SYSTRAN/faster-whisper)
 on your CPU, an animated SVG face served on `localhost`, and any
@@ -88,6 +93,20 @@ The character file format is shared with
 [paralel-discordverse](https://github.com/moudrkat/paralel-discordverse) —
 one character, two bodies: a face in the room and a webhook persona in
 your Discord.
+
+## Read its mind
+
+If you are going to design your replacement, you might as well watch it
+think. Point `REPLACEME_LLM_URL` at
+[brainscope](https://github.com/moudrkat/brainscope) and the avatar's
+every reply streams through a live view of the model's residual stream —
+logit lens, attention, steering vectors, the works. Run the brain with
+`--observed` and the character *knows* it is being watched mid-thought
+(and may, rarely, comment on it — sticking to the real mechanism, because
+inventing fake interpretability for a joke would be embarrassing).
+Brainscope is text-only, so pair it with `REPLACEME_LLM_VISION=0`.
+
+Design the replacement. Read its mind. Checkmate.
 
 ## Honest limitations
 
