@@ -224,6 +224,9 @@ _DEFAULT_THEME = {
     "ui_handoff_no": "Keep it",
     "ui_progress": "replacement progress",
     "ui_plan": "the big brain is on it",
+    "face_hair": "long",      # long | bob | none
+    "face_earring": "yes",    # yes | no
+    "face_glasses": "no",     # yes | no
 }
 
 # sections the engine consumes; anything else in the body is identity prose
@@ -344,6 +347,11 @@ class Character:
     def face_tokens(self) -> dict[str, str]:
         tokens = dict(_DEFAULT_THEME)
         tokens.update(self.theme)
+        # friendly geometry values -> css bits the face template consumes
+        hair = tokens.get("face_hair", "long")
+        tokens["face_hair_class"] = f"hair-{hair if hair in ('long', 'bob', 'none') else 'long'}"
+        tokens["face_earring_css"] = "none" if tokens.get("face_earring", "yes") == "no" else "block"
+        tokens["face_glasses_css"] = "block" if tokens.get("face_glasses", "no") == "yes" else "none"
         return tokens
 
 

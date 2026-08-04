@@ -152,7 +152,9 @@ every cue regex, the memory style. The `voice:` field takes any
 [edge-tts](https://github.com/rany2/edge-tts) voice — hundreds of them,
 any gender, ~40 languages: `edge-tts --list-voices` prints the catalog
 (`en-US-GuyNeural` for a male English colleague, `cs-CZ-AntoninNeural`
-for a Czech one), and empty means it only writes. Delete any section you don't care
+for a Czech one), and empty means it only writes. Geometry too: `face_hair: long | bob |
+none`, `face_earring: yes | no`, `face_glasses: yes | no` — a bald
+bespectacled colleague is three frontmatter lines away. Delete any section you don't care
 about; built-in defaults cover it. Different language? Set `language:`
 and whisper + prompts follow. No fork, no code.
 
