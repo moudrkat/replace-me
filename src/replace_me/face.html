@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>replace-me</title>
+<style>
+  /* The double-brace tokens below are substituted by the daemon from the
+     character file's theme_* keys; var() fallbacks keep the raw file viewable. */
+  :root {
+    --hair: {{theme_hair}};
+    --hair-light: {{theme_hair_light}};
+    --fringe: {{theme_fringe}};
+    --eyes: {{theme_eyes}};
+    --skin: {{theme_skin}};
+  }
+  .c-hair { fill: var(--hair, #e87faf); }
+  .c-hairlight { fill: var(--hair-light, #f096c0); }
+  .c-fringe { fill: var(--fringe, #f7a8cc); }
+  .c-iris { fill: var(--eyes, #87988a); }
+  .c-skin { fill: var(--skin, #f2d5c2); }
+  html, body { margin:0; height:100%; background:#14161a; overflow:hidden;
+    font-family:system-ui, sans-serif; }
+  #stage { height:100%; display:flex; align-items:center; justify-content:center; }
+  svg { height:min(92vh, 92vw); }
+  #head { transform-origin:200px 230px; animation: sway 6s ease-in-out infinite; }
+  @keyframes sway { 0%,100% { transform:rotate(-1.2deg) } 50% { transform:rotate(1.2deg) } }
+  #head.voice { animation:none; transform:rotate(3deg); transition:transform .4s; }
+  #head.thinking { animation:none; transform:rotate(-2deg); transition:transform .4s; }
+  #earring { animation: swing 3.1s ease-in-out infinite; }
+  @keyframes swing { 0%,100% { transform:rotate(3deg) } 50% { transform:rotate(-3deg) } }
+  .brow, .lid, .pupilbox, #mouth, .blush { transition: all .25s ease; }
+  #rec { position:fixed; top:14px; right:18px; color:#e05555; font-size:15px;
+    display:flex; gap:8px; align-items:center; opacity:.9; }
+  #rec .dot { width:12px; height:12px; border-radius:50%; background:#e05555;
+    animation:pulse 1.6s infinite; }
+  #rec.off { color:#777; } #rec.off .dot { background:#777; animation:none; }
+  @keyframes pulse { 0%,100% {opacity:1} 50% {opacity:.25} }
+  #sub { position:fixed; bottom:22px; left:0; right:0; text-align:center;
+    color:#cfd3da; font-size:calc(12px + 1.2vw); padding:0 6vw;
+    text-shadow:0 1px 4px #000; opacity:0; transition:opacity .5s; }
+  #sub.show { opacity:.85; }
+  #bubble { position:fixed; top:8vh; right:4vw; max-width:min(38vw, 480px);
+    background:#f4f5f7; color:#22252a; border-radius:18px;
+    padding:16px 20px; font-size:calc(14px + .9vw); line-height:1.35;
+    box-shadow:0 4px 18px rgba(0,0,0,.45); opacity:0; transform:scale(.85);
+    transform-origin:bottom left; transition:opacity .25s, transform .25s; }
+  #bubble.show { opacity:1; transform:scale(1); }
+  /* buttons appear only once a local brain reports state */
+  #controls { position:fixed; bottom:18px; left:18px; display:none; gap:10px; }
+  #controls.show { display:flex; }
+  #controls button, #consent button { background:#22252a; color:#cfd3da;
+    border:1px solid #3a3f47; border-radius:10px; padding:8px 16px;
+    font-size:15px; font-family:inherit; cursor:pointer; }
+  #controls button:disabled, #consent button:disabled { opacity:.4; }
+  #consent { position:fixed; bottom:86px; left:0; right:0; display:none;
+    justify-content:center; gap:14px; }
+  #consent.show { display:flex; }
+  #consent button { font-size:calc(14px + .6vw); padding:12px 26px; }
+  #consent .yes { background:#2c4a33; border-color:#3f6b49; color:#dfe9df; }
+  #consent .no { background:#4a2c2c; border-color:#6b3f3f; color:#e9dfdf; }
+  #bubble::after { content:""; position:absolute; left:-14px; bottom:22px;
+    border:12px solid transparent; border-right-color:#f4f5f7;
+    border-left-width:0; }
+</style>
+</head>
+<body>
+<div id="stage">
+<svg viewBox="0 0 400 460" aria-label="avatar">
+  <g id="head">
+    <!-- hair, back layer: so long the ends never enter the frame -->
+    <path class="c-hair" d="M110 150 Q95 40 200 38 Q305 40 290 150 Q302 260 296 470
+             L248 470 Q252 380 248 300 L152 300 Q148 380 152 470
+             L104 470 Q98 260 110 150"/>
+    <path class="c-hairlight" d="M128 160 Q120 60 200 55 Q280 60 272 160 Q281 300 276 470
+             L256 470 Q258 250 252 180 L148 180 Q142 250 144 470
+             L124 470 Q119 300 128 160"/>
+    <!-- face -->
+    <ellipse class="c-skin" cx="200" cy="210" rx="86" ry="98"/>
+    <!-- subtle 35ish smile lines, barely there -->
+    <path d="M136 236 q6 10 14 12 M264 236 q-6 10 -14 12"
+          stroke="#dcb49c" stroke-width="2" fill="none" opacity=".5"/>
+    <!-- blush -->
+    <ellipse class="blush" cx="146" cy="248" rx="14" ry="8" fill="#f0a0a8" opacity="0"/>
+    <ellipse class="blush" cx="254" cy="248" rx="14" ry="8" fill="#f0a0a8" opacity="0"/>
+    <!-- eyes: grey iris; lids close by scaling the whole eye group -->
+    <g class="eye" transform="translate(160 205)">
+      <g class="lid" transform="scale(1 1)">
+        <ellipse rx="21" ry="14" fill="#fff"/>
+        <g class="pupilbox">
+          <circle class="c-iris" r="9.5"/>
+          <circle r="4.5" fill="#2c2f34"/>
+          <circle cx="3" cy="-3" r="2" fill="#fff"/>
+        </g>
+      </g>
+    </g>
+    <g class="eye" transform="translate(240 205)">
+      <g class="lid" transform="scale(1 1)">
+        <ellipse rx="21" ry="14" fill="#fff"/>
+        <g class="pupilbox">
+          <circle class="c-iris" r="9.5"/>
+          <circle r="4.5" fill="#2c2f34"/>
+          <circle cx="3" cy="-3" r="2" fill="#fff"/>
+        </g>
+      </g>
+    </g>
+    <!-- brows -->
+    <rect class="brow" id="browL" x="140" y="178" width="42" height="7" rx="3.5"
+          fill="#c96a94" style="transform-origin:161px 181px"/>
+    <rect class="brow" id="browR" x="218" y="178" width="42" height="7" rx="3.5"
+          fill="#c96a94" style="transform-origin:239px 181px"/>
+    <!-- nose -->
+    <path d="M197 222 q-4 14 3 18" stroke="#dcb49c" stroke-width="3"
+          fill="none" stroke-linecap="round"/>
+    <!-- mouth -->
+    <path id="mouth" d="M170 268 Q200 280 230 268" stroke="#b8556f"
+          stroke-width="5" fill="none" stroke-linecap="round"/>
+    <!-- ear + the silver padlock earring -->
+    <ellipse class="c-skin" cx="286" cy="222" rx="9" ry="13"/>
+    <ellipse cx="286" cy="222" rx="4.5" ry="7" fill="#e3bda6"/>
+    <g id="earring" style="transform-origin:287px 233px">
+      <line x1="287" y1="231" x2="287" y2="240" stroke="#b9bec7" stroke-width="2"/>
+      <path d="M282.5 246 v-3.5 a4.5 4.5 0 0 1 9 0 V246" fill="none"
+            stroke="#c9ccd4" stroke-width="2.5"/>
+      <rect x="279" y="246" width="16" height="13" rx="3" fill="#d7dae0"
+            stroke="#8f96a1" stroke-width="1.2"/>
+      <rect x="281" y="247.5" width="5" height="10" rx="2.5" fill="#eceef2" opacity=".7"/>
+      <circle cx="287" cy="251" r="2" fill="#5c6270"/>
+      <path d="M286 252.5 h2 l1 4 h-4 z" fill="#5c6270"/>
+    </g>
+    <!-- full fringe (ofina): straight across, ends just above the brows -->
+    <path class="c-fringe" d="M116 192 Q112 76 200 66 Q288 76 284 192
+             Q278 162 264 174 Q252 160 238 172 Q226 158 212 171
+             Q200 159 186 171 Q174 158 160 172 Q148 161 136 174
+             Q124 164 116 192 Z"/>
+    <path class="c-hairlight" d="M120 186 Q124 120 160 96 Q136 130 132 176 Z" opacity=".55"/>
+    <path class="c-hairlight" d="M280 186 Q276 120 240 96 Q264 130 268 176 Z" opacity=".55"/>
+  </g>
+</svg>
+</div>
+<div id="rec" class="off"><span class="dot"></span><span id="rectext">{{ui_disconnected}}</span></div>
+<div id="sub"></div>
+<div id="bubble"></div>
+<div id="controls">
+  <button id="btnStart">▶ {{ui_meeting_start}}</button>
+  <button id="btnMinutes">✎ {{ui_minutes}}</button>
+  <button id="btnEnd">■ {{ui_meeting_end}}</button>
+</div>
+<div id="consent">
+  <button class="yes" id="btnYes">{{ui_handoff_yes}}</button>
+  <button class="no" id="btnNo">{{ui_handoff_no}}</button>
+</div>
+<script>
+  // mimika = expression table; a state machine picks base, reactions overlay it
+  const EXPR = {
+    neutral:  { bl:[0,0], br:[0,0], eye:1, px:0, py:0, mouth:"M170 268 Q200 280 230 268", blush:0 },
+    voice:    { bl:[-4,-6], br:[-4,-6], eye:1.12, px:0, py:1, mouth:"M172 268 Q200 282 228 268", blush:0 },
+    thinking: { bl:[-2,-4], br:[2,2], eye:.9, px:-5, py:-5, mouth:"M184 272 Q200 276 216 270", blush:0 },
+    sleepy:   { bl:[0,4], br:[0,4], eye:.45, px:0, py:2, mouth:"M178 272 Q200 276 222 272", blush:0 },
+    smile:    { bl:[-2,-3], br:[-2,-3], eye:1, px:0, py:0, mouth:"M166 262 Q200 292 234 262", blush:.5 },
+    beam:     { bl:[-4,-7], br:[-4,-7], eye:1.15, px:0, py:0, mouth:"M162 258 Q200 300 238 258", blush:.9 },
+    laugh:    { bl:[-4,-7], br:[-4,-7], eye:.25, px:0, py:0, mouth:"M164 258 Q200 302 236 258", blush:.8 },
+    shocked:  { bl:[-6,-10], br:[-6,-10], eye:1.3, px:0, py:0, mouth:"M188 264 a12 15 0 1 0 24 0 a12 15 0 1 0 -24 0", blush:.3 },
+    surprise: { bl:[-6,-9], br:[-6,-9], eye:1.28, px:0, py:-2, mouth:"M190 266 a10 12 0 1 0 20 0 a10 12 0 1 0 -20 0", blush:0 },
+    worried:  { bl:[8,-2], br:[-8,-2], eye:1, px:0, py:2, mouth:"M172 276 Q200 262 228 276", blush:0 },
+    skeptical:{ bl:[0,2], br:[-10,-8], eye:.85, px:4, py:0, mouth:"M174 270 L226 266", blush:0 },
+    curious:  { bl:[0,0], br:[-8,-7], eye:1.1, px:4, py:-2, mouth:"M180 268 Q200 278 220 266", blush:0 },
+    eyeroll:  { bl:[-3,-5], br:[-3,-5], eye:1, px:0, py:-8, mouth:"M176 270 L224 270", blush:0 },
+    wink:     { bl:[-2,-4], br:[-2,-4], eye:1, px:0, py:0, mouth:"M168 262 Q200 290 232 262", blush:.6, winkR:true },
+    frown:    { bl:[10,-3], br:[-10,-3], eye:.9, px:0, py:1, mouth:"M172 278 Q200 260 228 278", blush:0 },
+  };
+  const $ = s => document.querySelector(s), $$ = s => document.querySelectorAll(s);
+  const lids = $$(".lid"), pupils = $$(".pupilbox"), blushes = $$(".blush");
+  let base = "neutral", overlay = null, overlayUntil = 0, blinkScale = 1;
+
+  function apply() {
+    const name = (overlay && Date.now() < overlayUntil) ? overlay : base;
+    const e = EXPR[name] || EXPR.neutral;
+    $("#browL").style.transform = `rotate(${e.bl[0]}deg) translateY(${e.bl[1]}px)`;
+    $("#browR").style.transform = `rotate(${-e.br[0]}deg) translateY(${e.br[1]}px)`;
+    lids.forEach((lid, i) => {
+      const shut = e.winkR && i === 1 ? .08 : e.eye;
+      lid.style.transform = `scale(1, ${Math.min(shut, 1.3) * blinkScale})`;
+    });
+    pupils.forEach(p => p.style.transform = `translate(${e.px}px, ${e.py}px)`);
+    $("#mouth").setAttribute("d", e.mouth);
+    blushes.forEach(b => b.style.opacity = e.blush);
+    $("#head").className = base === "voice" ? "voice" : base === "thinking" ? "thinking" : "";
+  }
+
+  function react(name, seconds) {
+    if (!EXPR[name]) return;
+    overlay = name; overlayUntil = Date.now() + (seconds || 4) * 1000;
+    apply();
+    setTimeout(apply, (seconds || 4) * 1000 + 50);
+  }
+
+  // blink: quick lid squeeze at random intervals (skip while laughing/winking)
+  (function blink() {
+    blinkScale = .06; apply();
+    setTimeout(() => { blinkScale = 1; apply(); }, 130);
+    setTimeout(blink, 2800 + Math.random() * 3500);
+  })();
+
+  // boredom: long silence droops the face
+  let lastActivity = Date.now();
+  setInterval(() => {
+    if (base === "neutral" && Date.now() - lastActivity > 120000) { base = "sleepy"; apply(); }
+  }, 5000);
+
+  // face buttons: click -> POST /ui -> transcript command for the brain;
+  // visibility mirrors the brain-reported state (no brain, no buttons)
+  let uiState = null;
+  function applyState() {
+    if (!uiState) return;
+    $("#controls").className = "show";
+    $("#btnStart").style.display = uiState.meeting ? "none" : "";
+    $("#btnMinutes").style.display = uiState.meeting ? "" : "none";
+    $("#btnEnd").style.display = uiState.meeting ? "" : "none";
+    $("#consent").className = uiState.pending_handoff ? "show" : "";
+  }
+  function uiAction(action, btn) {
+    btn.disabled = true;  // the brain polls every ~2 s; block double clicks
+    setTimeout(() => { btn.disabled = false; }, 2500);
+    fetch("/ui", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action }) });
+  }
+  $("#btnStart").onclick = e => uiAction("meeting_start", e.target);
+  $("#btnMinutes").onclick = e => uiAction("meeting_minutes", e.target);
+  $("#btnEnd").onclick = e => uiAction("meeting_end", e.target);
+  $("#btnYes").onclick = e => uiAction("handoff_yes", e.target);
+  $("#btnNo").onclick = e => uiAction("handoff_no", e.target);
+
+  let sub_timer = null;
+  function subtitle(text) {
+    const el = $("#sub"); el.textContent = text; el.className = "show";
+    clearTimeout(sub_timer);
+    sub_timer = setTimeout(() => el.className = "", 12000);
+  }
+
+  // speech bubble: she writes instead of talking; mouth mimes along
+  let typeTimer = null, bubbleHide = null, talkTimer = null;
+  function startTalk() {
+    let open = false;
+    clearInterval(talkTimer);
+    talkTimer = setInterval(() => {
+      open = !open;
+      $("#mouth").setAttribute("d", open
+        ? "M187 262 a13 10 0 1 0 26 0 a13 10 0 1 0 -26 0"
+        : "M178 266 Q200 276 222 266");
+    }, 140);
+  }
+  function stopTalk() { clearInterval(talkTimer); talkTimer = null; apply(); }
+  function sayBubble(text, seconds) {
+    const el = $("#bubble");
+    clearInterval(typeTimer); clearTimeout(bubbleHide);
+    el.textContent = ""; el.className = "show";
+    let i = 0;
+    startTalk();
+    typeTimer = setInterval(() => {
+      el.textContent = text.slice(0, ++i);
+      if (i >= text.length) { clearInterval(typeTimer); stopTalk(); }
+    }, 35);
+    bubbleHide = setTimeout(() => { el.className = ""; stopTalk(); }, seconds * 1000);
+  }
+
+  function connect() {
+    const ws = new WebSocket(`ws://${location.host}/ws`);
+    ws.onopen = () => { $("#rec").className = ""; $("#rectext").textContent = "{{ui_recording}}"; };
+    ws.onclose = () => { $("#rec").className = "off"; $("#rectext").textContent = "{{ui_disconnected}}";
+      setTimeout(connect, 1500); };
+    ws.onmessage = event => {
+      const msg = JSON.parse(event.data);
+      lastActivity = Date.now();
+      if (msg.kind === "voice") { base = "voice"; apply(); }
+      else if (msg.kind === "thinking") { base = "thinking"; apply(); }
+      else if (msg.kind === "quiet") { base = "neutral"; apply(); }
+      else if (msg.kind === "loud") react("surprise", 2.5);
+      else if (msg.kind === "line") { subtitle(msg.text); if (msg.react) react(msg.react, 5); }
+      else if (msg.kind === "react") react(msg.expression, msg.seconds || 5);
+      else if (msg.kind === "say") sayBubble(msg.text, msg.seconds || 25);
+      else if (msg.kind === "state") { uiState = msg; applyState(); }
+    };
+  }
+  connect();
+  apply();
+</script>
+</body>
+</html>
