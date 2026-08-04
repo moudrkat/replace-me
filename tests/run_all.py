@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-SUITES = ["test_handoff.py", "test_minutes.py", "test_ui.py"]
+SUITES = ["test_handoff.py", "test_minutes.py", "test_ui.py", "test_style.py"]
 
 
 def main() -> None:

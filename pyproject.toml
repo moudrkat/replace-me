@@ -21,6 +21,7 @@ Homepage = "https://github.com/moudrkat/replace-me"
 replace-me = "replace_me.__main__:run"
 replace-me-brain = "replace_me.brain:main"
 replace-me-mcp = "replace_me.mcp:main"
+replace-me-style = "replace_me.style:main"
 
 [build-system]
 requires = ["hatchling"]

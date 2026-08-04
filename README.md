@@ -100,6 +100,17 @@ cannot rewrite itself from room speech: the transcript carries no speaker
 identity, and a colleague who can be reprogrammed by anyone within mic
 range is not a colleague, it's a vulnerability.)
 
+**Match it to you.** It's supposed to be *your* replacement, after all:
+
+- `characters/interview.md` is a ready-made prompt — hand it to your
+  agent session (or your local model), answer a few questions about how
+  you talk in meetings and what you mock, and it writes a CHARACTER.md
+  that is recognizably inspired by you without claiming to be you.
+- `replace-me-style photo.jpg` derives the face colors from a portrait —
+  the photo goes to your **local** model only (same rule as camera
+  frames: never to any cloud API, never stored) and out comes a
+  `theme_*` block to paste into your character file.
+
 The character file format is shared with
 [paralel-discordverse](https://github.com/moudrkat/paralel-discordverse) —
 one character, two bodies: a face in the room and a webhook persona in
