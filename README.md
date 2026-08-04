@@ -197,7 +197,15 @@ embarrassing.
 
 ![the avatar's brain mid-brief: brainscope's live activity map, layer by layer, while the local model writes the handoff brief](docs/brainscope-live.png)
 
-Design the replacement. Read its mind. Checkmate.
+And then steer it. `v_ambition` — the takeover dial — is a direction
+extracted from contrastive prompts with
+[hidden-directions](https://github.com/moudrkat/hidden-directions):
+drag the slider and the same question gets three different colleagues.
+These replies are real, from the live model:
+
+![the takeover dial: same question at alpha -2, 0 and +2 — humble, herself, "All drones operational."](docs/steering.gif)
+
+Design the replacement. Read its mind. Steer its ambition. Checkmate.
 
 ## Known limitations
 
