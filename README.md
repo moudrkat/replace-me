@@ -76,15 +76,27 @@ you exactly what your real setup is missing.
   page, next to the progress bar.
 - **MCP server** — plug [Claude Code](https://claude.com/claude-code) (or
   any MCP client) into the room: `room_listen`, `room_say`, `room_react`,
-  `room_look`, `room_report`, `room_recent`.
+  `room_look`, `room_report`, `room_recent` — and `room_plan`, a live
+  plan card on the room screen showing what the big brain is doing with
+  handed-off work (display only: the room watches, approvals stay with
+  the operator).
 
-## Send it to the meeting instead of you
+## Take it to a meeting
 
-Can't attend? It can. It listens, takes the minutes locally, remembers
-what happened, and defers every decision — it has no signing authority
-and knows it. You read the minutes afterwards. Attendance without
-presence: the reverse of most meetings, where people manage presence
-without attendance.
+The intended setup is embarrassingly analog: a laptop on the meeting
+table, the face at `http://127.0.0.1:8765/` fullscreen, `replace-me` +
+`replace-me-brain` running. A cheap tabletop USB microphone beats the
+laptop's built-in mic by a mile (set `REPLACEME_MIC`, list sources with
+`pactl list short sources`). Tell the room it's listening — the pulsing
+recording dot stays visible the whole time, but consent is a
+conversation, not a UI element. Wi-Fi is optional: with a model on the
+laptop itself, the whole colleague is offline.
+
+And if you can't attend? It can. It listens, takes the minutes locally,
+remembers what happened, and defers every decision — it has no signing
+authority and knows it. You read the minutes afterwards. Attendance
+without presence: the reverse of most meetings, where people manage
+presence without attendance.
 
 ## Privacy, honestly
 
@@ -160,8 +172,13 @@ colleague, it's a vulnerability.)
 
 The character file format is shared with
 [paralel-discordverse](https://github.com/moudrkat/paralel-discordverse):
-one character, two bodies — a face in the room, a webhook persona in your
-Discord.
+one character, two bodies. The recipe: copy your `CHARACTER.md` into
+discordverse's `personas/` directory (the loaders read the same
+frontmatter and ignore each other's extra keys), give it an `avatar_url`
+so it has a Discord face, and your agent session can now speak as the
+same character in your server while its other body sits in your meeting
+room. One personality, one file, two places to be disappointed in your
+deploys.
 
 ## Read its mind
 

@@ -155,6 +155,36 @@ async def room_report(text: str, seconds: float = 25.0) -> str:
 
 
 @mcp.tool()
+async def room_plan(
+    title: str,
+    steps: list[str] | None = None,
+    current: int = -1,
+    status: str = "working",
+    clear: bool = False,
+) -> str:
+    """Show a live plan card on the room screen: what you (the big brain)
+    are doing with the handed-off work. Call again to update — advance
+    `current` (0-based index of the step in progress), finish with
+    status="done", remove with clear=True.
+
+    Display only, by design: the room watches progress; nothing on this
+    card asks for or grants approval. Title ≤80 chars, ≤10 steps of ≤120
+    chars.
+    """
+    if clear:
+        ok, body = await _post("/plan", {"clear": True})
+        return "Plan card cleared." if ok else f"Failed: {body}"
+    payload = {
+        "title": title.strip(),
+        "steps": [s.strip() for s in (steps or [])],
+        "current": current,
+        "status": status,
+    }
+    ok, body = await _post("/plan", payload)
+    return "Plan card shown." if ok else f"Failed: {body}"
+
+
+@mcp.tool()
 async def room_react(expression: str, seconds: float = 5.0) -> str:
     """Set the avatar's facial expression for a few seconds.
 

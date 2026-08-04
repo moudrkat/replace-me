@@ -34,6 +34,10 @@
   #rec .dot { width:12px; height:12px; border-radius:50%; background:#e05555;
     animation:pulse 1.6s infinite; }
   #rec.off { color:#777; } #rec.off .dot { background:#777; animation:none; }
+  /* which brain is plugged in right now */
+  #brainbadge { position:fixed; top:14px; left:18px; color:#8a8f98;
+    font-size:13px; display:none; }
+  #brainbadge.show { display:block; }
   @keyframes pulse { 0%,100% {opacity:1} 50% {opacity:.25} }
   #sub { position:fixed; bottom:22px; left:0; right:0; text-align:center;
     color:#cfd3da; font-size:calc(12px + 1.2vw); padding:0 6vw;
@@ -58,6 +62,21 @@
   #consent button { font-size:calc(14px + .6vw); padding:12px 26px; }
   #consent .yes { background:#2c4a33; border-color:#3f6b49; color:#dfe9df; }
   #consent .no { background:#4a2c2c; border-color:#6b3f3f; color:#e9dfdf; }
+  /* the plan card: what the big brain is doing with handed-off work */
+  #plan { position:fixed; top:8vh; left:4vw; max-width:min(34vw, 420px);
+    background:#1c1f24; color:#cfd3da; border:1px solid #3a3f47;
+    border-radius:14px; padding:14px 18px; font-size:15px; line-height:1.5;
+    opacity:0; transform:translateY(-8px); transition:opacity .3s, transform .3s,
+    border-color .5s; pointer-events:none; }
+  #plan.show { opacity:1; transform:translateY(0); }
+  #plan.done { border-color:#3f6b49; }
+  #planhead { font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+    color:#8a8f98; margin-bottom:4px; }
+  #plantitle { font-weight:600; margin-bottom:8px; }
+  #plansteps { list-style:none; margin:0; padding:0; }
+  #plansteps li { padding:2px 0; color:#8a8f98; }
+  #plansteps li.now { color:#e8eaee; }
+  #plansteps li.past { color:#5d6470; text-decoration:line-through; }
   /* the career indicator: how far along the replacement is */
   #career { position:fixed; bottom:18px; right:18px; width:230px; display:none;
     color:#9aa0aa; font-size:15px; text-align:right; }
@@ -153,6 +172,7 @@
 </svg>
 </div>
 <div id="rec" class="off"><span class="dot"></span><span id="rectext">{{ui_disconnected}}</span></div>
+<div id="brainbadge">🧠 <span id="brainmodel"></span></div>
 <div id="sub"></div>
 <div id="bubble"></div>
 <div id="controls">
@@ -167,6 +187,11 @@
 <div id="career">
   <span>{{ui_progress}}</span> <span id="careerval"></span>
   <div id="careerbar"><div id="careerfill"></div></div>
+</div>
+<div id="plan">
+  <div id="planhead">{{ui_plan}}</div>
+  <div id="plantitle"></div>
+  <ol id="plansteps"></ol>
 </div>
 <script>
   // mimika = expression table; a state machine picks base, reactions overlay it
@@ -236,6 +261,10 @@
     $("#btnMinutes").style.display = uiState.meeting ? "" : "none";
     $("#btnEnd").style.display = uiState.meeting ? "" : "none";
     $("#consent").className = uiState.pending_handoff ? "show" : "";
+    if (uiState.model) {
+      $("#brainbadge").className = "show";
+      $("#brainmodel").textContent = uiState.model.split("/").pop();
+    }
     if (typeof uiState.progress === "number") {
       const career = $("#career");
       const moved = career.dataset.progress
@@ -312,6 +341,23 @@
       else if (msg.kind === "react") react(msg.expression, msg.seconds || 5);
       else if (msg.kind === "say") sayBubble(msg.text, msg.seconds || 25);
       else if (msg.kind === "state") { uiState = msg; applyState(); }
+      else if (msg.kind === "plan") {
+        const card = $("#plan");
+        if (msg.clear) { card.className = ""; }
+        else {
+          $("#plantitle").textContent = msg.title;
+          const list = $("#plansteps");
+          list.textContent = "";
+          (msg.steps || []).forEach((step, i) => {
+            const li = document.createElement("li");
+            const donePast = msg.status === "done" || i < msg.current;
+            li.textContent = (donePast ? "✓ " : i === msg.current ? "→ " : "· ") + step;
+            li.className = donePast ? "past" : i === msg.current ? "now" : "";
+            list.appendChild(li);
+          });
+          card.className = "show" + (msg.status === "done" ? " done" : "");
+        }
+      }
     };
   }
   connect();

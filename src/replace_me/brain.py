@@ -182,6 +182,7 @@ async def _post_state(port: int, meeting: bool, pending: bool) -> None:
                     "meeting": meeting,
                     "pending_handoff": pending,
                     "progress": career.progress(),
+                    "model": os.environ.get(llm.MODEL_ENV, llm.DEFAULT_MODEL),
                 },
                 timeout=aiohttp.ClientTimeout(total=10),
             )

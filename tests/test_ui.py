@@ -41,6 +41,7 @@ class FakeFace:
     def __init__(self, session: aiohttp.ClientSession) -> None:
         self.session = session
         self.states: list[dict] = []
+        self.plans: list[dict] = []
         self.task: asyncio.Task | None = None
 
     async def connect(self) -> None:
@@ -51,6 +52,8 @@ class FakeFace:
                 data = json.loads(message.data)
                 if data.get("kind") == "state":
                     self.states.append(data)
+                elif data.get("kind") == "plan":
+                    self.plans.append(data)
 
         self.task = asyncio.create_task(pump())
 
@@ -136,6 +139,26 @@ async def main() -> None:
             "ui labels substituted",
             "▶ Meeting" in html and "Hand over" in html and "{{ui_" not in html,
         )
+
+        # plan card: session-driven, display only
+        resp = await session.post(f"{BASE}/plan", json={"title": "", "steps": []})
+        check("empty plan rejected", resp.status == 400)
+        from replace_me import mcp as mcp_server
+
+        plan_fn = getattr(mcp_server.room_plan, "fn", mcp_server.room_plan)
+        out = await plan_fn("Fix the login bug",
+                            ["read the brief", "write the fix", "run tests"], current=1)
+        ok = await wait_for(lambda: face.plans and face.plans[-1].get("current") == 1)
+        check("plan card broadcast", out == "Plan card shown." and ok, str(face.plans[-1:]))
+        third = FakeFace(session)
+        await third.connect()
+        ok = await wait_for(lambda: third.plans and third.plans[-1]["title"] == "Fix the login bug", 4)
+        check("late face gets plan replay", ok)
+        out = await plan_fn("", clear=True)
+        ok = await wait_for(lambda: face.plans and face.plans[-1].get("clear"))
+        check("plan card cleared", out == "Plan card cleared." and ok)
+        if third.task:
+            third.task.cancel()
 
         brain_task.cancel()
         daemon_task.cancel()

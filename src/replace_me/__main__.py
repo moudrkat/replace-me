@@ -83,6 +83,8 @@ class _Face:
         # last brain-reported state; None until a brain posts one, and the
         # face hides its buttons until then (no brain -> no buttons)
         self.state: dict | None = None
+        # last plan card posted by the agent session (display only)
+        self.plan: dict | None = None
 
     async def send(self, payload: dict) -> None:
         dead = []
@@ -111,6 +113,10 @@ def _routes(face: _Face) -> list[web.RouteDef]:
         if face.state is not None:  # late joiners get the current buttons
             await socket.send_str(
                 json.dumps({"kind": "state", **face.state}, ensure_ascii=False)
+            )
+        if face.plan is not None:  # ...and the plan card in progress
+            await socket.send_str(
+                json.dumps({"kind": "plan", **face.plan}, ensure_ascii=False)
             )
         try:
             async for message in socket:
@@ -192,7 +198,7 @@ def _routes(face: _Face) -> list[web.RouteDef]:
             return web.json_response({"error": "bad json"}, status=400)
         current = face.state or {
             "meeting": False, "pending_handoff": False,
-            "progress": 0.0, "buttons": True,
+            "progress": 0.0, "buttons": True, "model": "",
         }
         face.state = {
             "meeting": bool(data.get("meeting", current["meeting"])),
@@ -201,8 +207,44 @@ def _routes(face: _Face) -> list[web.RouteDef]:
             ),
             "progress": float(data.get("progress", current["progress"]) or 0.0),
             "buttons": bool(data.get("buttons", current["buttons"])),
+            "model": str(data.get("model", current.get("model", ""))),
         }
         await face.send({"kind": "state", **face.state})
+        return web.json_response({"ok": True})
+
+    async def plan(request: web.Request) -> web.Response:
+        """A plan card from the agent session: what the big brain is doing
+        with the handed-off work. Display only — the room watches
+        progress, it approves nothing here."""
+        try:
+            data = await request.json()
+        except json.JSONDecodeError:
+            return web.json_response({"error": "bad json"}, status=400)
+        if data.get("clear"):
+            face.plan = None
+            await face.send({"kind": "plan", "clear": True})
+            return web.json_response({"ok": True})
+        title = str(data.get("title", "")).strip()
+        steps = data.get("steps") or []
+        if not title or len(title) > 80:
+            return web.json_response({"error": "title required, max 80 chars"}, status=400)
+        if not isinstance(steps, list) or len(steps) > 10 or any(
+            not isinstance(s, str) or not s.strip() or len(s) > 120 for s in steps
+        ):
+            return web.json_response(
+                {"error": "steps: list of up to 10 non-empty strings, max 120 chars each"},
+                status=400,
+            )
+        status = str(data.get("status", "working"))
+        if status not in {"working", "done"}:
+            return web.json_response({"error": "status: working|done"}, status=400)
+        face.plan = {
+            "title": title,
+            "steps": [s.strip() for s in steps],
+            "current": int(data.get("current", -1)),
+            "status": status,
+        }
+        await face.send({"kind": "plan", **face.plan})
         return web.json_response({"ok": True})
 
     return [
@@ -213,6 +255,7 @@ def _routes(face: _Face) -> list[web.RouteDef]:
         web.post("/look", look),
         web.post("/ui", ui),
         web.post("/state", state),
+        web.post("/plan", plan),
     ]
 
 

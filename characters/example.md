@@ -19,6 +19,7 @@ ui_meeting_end: End
 ui_handoff_yes: Hand over
 ui_handoff_no: Keep it
 ui_progress: replacement progress
+ui_plan: the big brain is on it
 ---
 the colleague who was hired to eventually replace you
 

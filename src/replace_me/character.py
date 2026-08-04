@@ -223,6 +223,7 @@ _DEFAULT_THEME = {
     "ui_handoff_yes": "Hand over",
     "ui_handoff_no": "Keep it",
     "ui_progress": "replacement progress",
+    "ui_plan": "the big brain is on it",
 }
 
 # sections the engine consumes; anything else in the body is identity prose
