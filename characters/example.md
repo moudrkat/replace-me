@@ -31,7 +31,8 @@ don't care about; a built-in default covers it. Or just tell your agent
 session to edit it for you.
 
 How it works: the flat frontmatter above holds identity basics (wake
-`names` as a comma-separated list, any edge-tts `voice` or empty for a
+`names` as a comma-separated list, any edge-tts `voice` (see
+`edge-tts --list-voices` — male, female, ~40 languages) or empty for a
 character that only writes, face colors and button labels). The `##`
 sections below feed the engine directly. Everything OUTSIDE those
 sections — like this prose — is identity: appended verbatim to the system
