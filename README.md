@@ -115,10 +115,20 @@ replace-me-brain             # the local brain (second terminal)
 claude mcp add replace-me replace-me-mcp   # optional: plug in Claude Code
 ```
 
-Ollama: `REPLACEME_LLM_URL=http://127.0.0.1:11434/v1`,
-`REPLACEME_MODEL=gemma-4-e4b` (multimodal → the camera works). Text-only
+**Never run a local model before?** Two commands:
+
+```bash
+curl -fsSL https://ollama.com/install.sh | sh   # or download from ollama.com
+ollama pull gemma-4-e4b                          # ~5 GB, multimodal → the camera works
+```
+
+then `REPLACEME_LLM_URL=http://127.0.0.1:11434/v1` and
+`REPLACEME_MODEL=gemma-4-e4b` in `.env`. Any OpenAI-compatible server
+works the same way (vLLM, llama.cpp, LM Studio, brainscope). Text-only
 backend? `REPLACEME_LLM_VISION=0` and the character admits to being blind
-instead of hallucinating a camera.
+instead of hallucinating a camera. A 4B-class model on a plain CPU is
+enough for banter and minutes; it just thinks for a few seconds first,
+which honestly fits the character.
 
 ## Make it yours
 
