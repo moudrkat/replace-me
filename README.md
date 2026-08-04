@@ -162,7 +162,7 @@ mid-thought, and may — rarely — comment on it, sticking to the real
 mechanism, because inventing fake interpretability for a joke would be
 embarrassing.
 
-![the avatar running on brainscope, complaining while the logit lens shows the complaint forming](docs/brainscope-live.png)
+![the avatar's brain mid-brief: brainscope's live activity map, layer by layer, while the local model writes the handoff brief](docs/brainscope-live.png)
 
 Design the replacement. Read its mind. Checkmate.
 
