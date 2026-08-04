@@ -312,10 +312,15 @@
     }, 140);
   }
   function stopTalk() { clearInterval(talkTimer); talkTimer = null; apply(); }
-  function sayBubble(text, seconds) {
+  function sayBubble(text, seconds, instant) {
     const el = $("#bubble");
     clearInterval(typeTimer); clearTimeout(bubbleHide);
     el.textContent = ""; el.className = "show";
+    if (instant) {  // presentation mode: the whole line, readable at once
+      el.textContent = text;
+      bubbleHide = setTimeout(() => { el.className = ""; }, seconds * 1000);
+      return;
+    }
     let i = 0;
     startTalk();
     typeTimer = setInterval(() => {
@@ -339,7 +344,7 @@
       else if (msg.kind === "loud") react("surprise", 2.5);
       else if (msg.kind === "line") { subtitle(msg.text); if (msg.react) react(msg.react, 5); }
       else if (msg.kind === "react") react(msg.expression, msg.seconds || 5);
-      else if (msg.kind === "say") sayBubble(msg.text, msg.seconds || 25);
+      else if (msg.kind === "say") sayBubble(msg.text, msg.seconds || 25, msg.instant);
       else if (msg.kind === "state") { uiState = msg; applyState(); }
       else if (msg.kind === "plan") {
         const card = $("#plan");

@@ -154,7 +154,8 @@ def _routes(face: _Face) -> list[web.RouteDef]:
         if len(text) > 140:
             return web.json_response({"error": "max 140 chars — it is a quip, not a blog"}, status=400)
         seconds = min(max(float(data.get("seconds", 25)), 3.0), 120.0)
-        await face.send({"kind": "say", "text": text, "seconds": seconds})
+        await face.send({"kind": "say", "text": text, "seconds": seconds,
+                         "instant": bool(data.get("instant"))})
         transcript.append(text, who=transcript.WHO_AVATAR)  # its side persists too
         if data.get("speak", True):
             asyncio.get_running_loop().create_task(_speak(text, face.muted))
