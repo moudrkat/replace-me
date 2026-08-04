@@ -83,7 +83,10 @@ async def room_listen(timeout_seconds: int = 120) -> str:
         if lines:
             _cursor = lines[-1].ts
             if private:
-                lines = [line for line in lines if line.who == transcript.WHO_HANDOFF]
+                lines = [line for line in lines
+                         if line.who == transcript.WHO_HANDOFF
+                         or (line.who == transcript.WHO_UI
+                             and line.text.startswith("plan_"))]
             if lines:
                 return "\n".join(line.render() for line in lines)
         await asyncio.sleep(1.0)
@@ -167,9 +170,11 @@ async def room_plan(
     `current` (0-based index of the step in progress), finish with
     status="done", remove with clear=True.
 
-    Display only, by design: the room watches progress; nothing on this
-    card asks for or grants approval. Title ≤80 chars, ≤10 steps of ≤120
-    chars.
+    status="proposed" shows Approve/Rework buttons on the card — the room
+    (same trust tier that consented to the handoff) can okay the APPROACH;
+    watch room_listen for a [UI] plan_approve / plan_reject line, then
+    update the card to status="working". working/done are display only.
+    Title ≤80 chars, ≤10 steps of ≤120 chars.
     """
     if clear:
         ok, body = await _post("/plan", {"clear": True})

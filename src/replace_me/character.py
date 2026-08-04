@@ -224,6 +224,8 @@ _DEFAULT_THEME = {
     "ui_handoff_no": "Keep it",
     "ui_progress": "replacement progress",
     "ui_plan": "the big brain is on it",
+    "ui_plan_yes": "Approve plan",
+    "ui_plan_no": "Rework it",
     "face_hair": "long",      # long | bob | none
     "face_earring": "yes",    # yes | no
     "face_glasses": "no",     # yes | no

@@ -39,7 +39,8 @@ EXPRESSIONS = frozenset(
 # and the brain treats it exactly like the spoken equivalent — same trust
 # as a voice in the room.
 UI_ACTIONS = frozenset(
-    {"meeting_start", "meeting_minutes", "meeting_end", "handoff_yes", "handoff_no"}
+    {"meeting_start", "meeting_minutes", "meeting_end", "handoff_yes",
+     "handoff_no", "plan_approve", "plan_reject"}
 )
 
 
@@ -237,8 +238,8 @@ def _routes(face: _Face) -> list[web.RouteDef]:
                 status=400,
             )
         status = str(data.get("status", "working"))
-        if status not in {"working", "done"}:
-            return web.json_response({"error": "status: working|done"}, status=400)
+        if status not in {"proposed", "working", "done"}:
+            return web.json_response({"error": "status: proposed|working|done"}, status=400)
         face.plan = {
             "title": title,
             "steps": [s.strip() for s in steps],

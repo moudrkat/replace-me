@@ -154,6 +154,15 @@ async def main() -> None:
         await third.connect()
         ok = await wait_for(lambda: third.plans and third.plans[-1]["title"] == "Fix the login bug", 4)
         check("late face gets plan replay", ok)
+        out = await plan_fn("Refactor auth", ["read", "patch"], status="proposed")
+        ok = await wait_for(lambda: face.plans and face.plans[-1].get("status") == "proposed")
+        check("proposed plan broadcast", out == "Plan card shown." and ok)
+        await session.post(f"{BASE}/ui", json={"action": "plan_approve"})
+        ok = await wait_for(lambda: any(
+            l.who == transcript.WHO_UI and l.text == "plan_approve"
+            for l in transcript.read_last(10)))
+        check("plan approval click recorded", ok)
+
         out = await plan_fn("", clear=True)
         ok = await wait_for(lambda: face.plans and face.plans[-1].get("clear"))
         check("plan card cleared", out == "Plan card cleared." and ok)

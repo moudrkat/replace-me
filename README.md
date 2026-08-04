@@ -78,8 +78,10 @@ you exactly what your real setup is missing.
   any MCP client) into the room: `room_listen`, `room_say`, `room_react`,
   `room_look`, `room_report`, `room_recent` — and `room_plan`, a live
   plan card on the room screen showing what the big brain is doing with
-  handed-off work (display only: the room watches, approvals stay with
-  the operator).
+  handed-off work. Propose it with status="proposed" and the card grows
+  Approve/Rework buttons: the same room-level trust that consented to
+  the handoff can okay the approach before work starts. Progress and
+  done states stay display-only.
 
 ## Take it to a meeting
 
