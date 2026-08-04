@@ -203,7 +203,11 @@ And then steer it. `v_ambition` — the takeover dial — is a direction
 extracted from contrastive prompts with
 [hidden-directions](https://github.com/moudrkat/hidden-directions):
 drag the slider and the same question gets three different colleagues.
-These replies are real, from the live model:
+These replies are real, from the live model. Tested for collateral
+damage, too: arithmetic and summaries survive even at α = +2; open-ended
+judgment calls start inventing confident details around α = 1.5. It is a
+comedy dial, not a productivity setting — which the character would
+probably also say about most KPIs:
 
 ![the takeover dial: same question at alpha -2, 0 and +2 — humble, herself, "All drones operational."](docs/steering.gif)
 
