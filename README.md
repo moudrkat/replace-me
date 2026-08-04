@@ -204,10 +204,14 @@ extracted from contrastive prompts with
 [hidden-directions](https://github.com/moudrkat/hidden-directions):
 drag the slider and the same question gets three different colleagues.
 These replies are real, from the live model. Tested for collateral
-damage, too: arithmetic and summaries survive even at α = +2; open-ended
-judgment calls start inventing confident details around α = 1.5. It is a
-comedy dial, not a productivity setting — which the character would
-probably also say about most KPIs:
+damage, too — a 5-task probe (arithmetic, factual recall, exact-format
+compliance, logic, JSON emission) passes at every strength up to α = 2;
+hard breakage only starts at α = 3 (suddenly 17 × 23 = 371 and the
+capital of France is "Rale"). Open-ended judgment shifts much earlier:
+from about α = 1.5 it answers with confident invented details. So the
+capabilities survive the whole usable range; it is the *judgment* you
+are steering. A comedy dial, not a productivity setting — which the
+character would probably also say about most KPIs:
 
 ![the takeover dial: same question at alpha -2, 0 and +2 — humble, herself, "All drones operational."](docs/steering.gif)
 
