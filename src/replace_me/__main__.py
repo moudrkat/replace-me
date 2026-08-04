@@ -189,6 +189,7 @@ def _routes(face: _Face) -> list[web.RouteDef]:
         face.state = {
             "meeting": bool(data.get("meeting")),
             "pending_handoff": bool(data.get("pending_handoff")),
+            "progress": float(data.get("progress") or 0.0),
         }
         await face.send({"kind": "state", **face.state})
         return web.json_response({"ok": True})
@@ -204,7 +205,7 @@ def _routes(face: _Face) -> list[web.RouteDef]:
     ]
 
 
-async def _serve() -> None:
+async def _serve(demo: bool = False) -> None:
     face = _Face()
 
     async def sink(kind: str, payload: str) -> None:
@@ -223,16 +224,34 @@ async def _serve() -> None:
     await site.start()
     log.info("face at http://127.0.0.1:%d/ — open it fullscreen", port)
     try:
-        await ears.run(sink, muted=face.muted)
+        if demo:
+            from replace_me import demo as demo_module
+
+            log.info("DEMO MODE: scripted meeting, no mic, no model")
+            await demo_module.run(sink, face)
+        else:
+            await ears.run(sink, muted=face.muted)
     finally:
         await runner.cleanup()
 
 
 def run() -> None:
+    import sys
+    import tempfile
+
     logging.basicConfig(level=logging.INFO, format="%(name)s: %(message)s")
     load_dotenv()
+    if "doctor" in sys.argv[1:]:
+        from replace_me import doctor
+
+        doctor.main()
+        return
+    demo = "--demo" in sys.argv[1:]
+    if demo and not os.environ.get("REPLACEME_DIR"):
+        # demo never pollutes a real transcript or career file
+        os.environ["REPLACEME_DIR"] = tempfile.mkdtemp(prefix="replace-me-demo-")
     try:
-        asyncio.run(_serve())
+        asyncio.run(_serve(demo=demo))
     except KeyboardInterrupt:
         pass
 

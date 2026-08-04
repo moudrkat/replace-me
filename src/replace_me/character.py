@@ -175,6 +175,21 @@ _DEFAULT_MINUTES_PROMPT = (
     "no preamble, no commentary."
 )
 
+_DEFAULT_MILESTONE_BUBBLE = (
+    "Replacement progress: {percent} %. I'd start updating a CV. Mine.",
+    "{percent} % of your job. The committee may want to prepare.",
+)
+
+_DEFAULT_MEMORY_PROMPT = (
+    "These are your private notes-to-self from previous meetings, followed "
+    "by the minutes of the meeting that just ended. Update the notes: keep "
+    "what matters long-term (projects, recurring problems, who keeps "
+    "promising what, running jokes, how things usually go), add today's, "
+    "drop stale details. Max 25 lines of plain bullets, written in your "
+    "own voice and language — they will be whispered back to you before "
+    "future meetings. Return only the notes."
+)
+
 _DEFAULT_MINUTES_UPDATE_PROMPT = (
     "Here are the meeting minutes so far and the next part of the "
     "transcript. Update the minutes (same sections ## Topics / "
@@ -207,6 +222,7 @@ _DEFAULT_THEME = {
     "ui_meeting_end": "End",
     "ui_handoff_yes": "Hand over",
     "ui_handoff_no": "Keep it",
+    "ui_progress": "replacement progress",
 }
 
 # sections the engine consumes; anything else in the body is identity prose
@@ -221,6 +237,7 @@ _CONSUMED = frozenset(
         "meeting start bubble", "minutes working bubble",
         "minutes ready bubble", "meeting none bubble",
         "meeting already bubble", "minutes prompt", "minutes update prompt",
+        "memory prompt", "milestone bubble",
     }
 )
 
@@ -260,6 +277,8 @@ class Character:
     meeting_already_bubble: tuple[str, ...] = _DEFAULT_MEETING_ALREADY_BUBBLE
     minutes_prompt: str = _DEFAULT_MINUTES_PROMPT
     minutes_update_prompt: str = _DEFAULT_MINUTES_UPDATE_PROMPT
+    memory_prompt: str = _DEFAULT_MEMORY_PROMPT
+    milestone_bubble: tuple[str, ...] = _DEFAULT_MILESTONE_BUBBLE
     reflex_rules: tuple[tuple[str, str], ...] = tuple(
         (pattern, expr) for pattern, expr in _DEFAULT_REFLEXES
     )
@@ -466,6 +485,9 @@ def get() -> Character:
         or defaults.meeting_already_bubble,
         minutes_prompt=section("minutes prompt", defaults.minutes_prompt),
         minutes_update_prompt=section("minutes update prompt", defaults.minutes_update_prompt),
+        memory_prompt=section("memory prompt", defaults.memory_prompt),
+        milestone_bubble=_parse_lines(sections.get("milestone bubble", ""))
+        or defaults.milestone_bubble,
         reflex_rules=reflexes or defaults.reflex_rules,
         theme=theme,
         appendix=appendix,

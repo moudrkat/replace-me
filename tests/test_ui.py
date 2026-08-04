@@ -71,9 +71,11 @@ async def main() -> None:
         brain_task = asyncio.create_task(brain.run(chatty=False, observed=False))
         ok = await wait_for(
             lambda: face.states
-            and face.states[-1] == {"kind": "state", "meeting": False, "pending_handoff": False}
+            and face.states[-1]["meeting"] is False
+            and face.states[-1]["pending_handoff"] is False
+            and "progress" in face.states[-1]
         )
-        check("startup state broadcast", ok, str(face.states))
+        check("startup state broadcast (with progress)", ok, str(face.states))
 
         resp = await session.post(f"{BASE}/ui", json={"action": "rm -rf"})
         check("garbage action rejected", resp.status == 400 and not transcript.read_last(5))

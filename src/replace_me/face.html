@@ -58,6 +58,14 @@
   #consent button { font-size:calc(14px + .6vw); padding:12px 26px; }
   #consent .yes { background:#2c4a33; border-color:#3f6b49; color:#dfe9df; }
   #consent .no { background:#4a2c2c; border-color:#6b3f3f; color:#e9dfdf; }
+  /* the career indicator: how far along the replacement is */
+  #career { position:fixed; bottom:18px; right:18px; width:190px; display:none;
+    color:#8a8f98; font-size:12px; text-align:right; }
+  #career.show { display:block; }
+  #careerbar { height:4px; background:#2a2e35; border-radius:2px;
+    margin-top:4px; overflow:hidden; }
+  #careerfill { height:100%; width:0%; background:var(--hair, #e87faf);
+    transition:width 1.2s ease; }
   #bubble::after { content:""; position:absolute; left:-14px; bottom:22px;
     border:12px solid transparent; border-right-color:#f4f5f7;
     border-left-width:0; }
@@ -149,6 +157,10 @@
   <button class="yes" id="btnYes">{{ui_handoff_yes}}</button>
   <button class="no" id="btnNo">{{ui_handoff_no}}</button>
 </div>
+<div id="career">
+  <span>{{ui_progress}}</span> <span id="careerval"></span>
+  <div id="careerbar"><div id="careerfill"></div></div>
+</div>
 <script>
   // mimika = expression table; a state machine picks base, reactions overlay it
   const EXPR = {
@@ -217,6 +229,11 @@
     $("#btnMinutes").style.display = uiState.meeting ? "" : "none";
     $("#btnEnd").style.display = uiState.meeting ? "" : "none";
     $("#consent").className = uiState.pending_handoff ? "show" : "";
+    if (typeof uiState.progress === "number") {
+      $("#career").className = "show";
+      $("#careerval").textContent = uiState.progress.toFixed(1) + " %";
+      $("#careerfill").style.width = Math.min(uiState.progress, 100) + "%";
+    }
   }
   function uiAction(action, btn) {
     btn.disabled = true;  // the brain polls every ~2 s; block double clicks

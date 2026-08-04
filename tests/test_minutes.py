@@ -105,7 +105,10 @@ async def main() -> None:
     check("chunking made multiple LLM calls", len(llm_calls) >= 2, f"calls={len(llm_calls)}")
     check(
         "update prompt used on later chunks",
-        len(llm_calls) >= 2 and "Update the minutes" in llm_calls[-1]["messages"][0]["content"],
+        len(llm_calls) >= 2
+        and any(
+            "Update the minutes" in call["messages"][0]["content"] for call in llm_calls
+        ),  # the very last call may be the memory distillation, not a chunk
     )
 
     brain_task.cancel()

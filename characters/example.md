@@ -18,6 +18,7 @@ ui_minutes: Minutes
 ui_meeting_end: End
 ui_handoff_yes: Hand over
 ui_handoff_no: Keep it
+ui_progress: replacement progress
 ---
 the colleague who was hired to eventually replace you
 
@@ -206,3 +207,12 @@ Write meeting minutes in markdown with sections: ## Topics (short bullets of wha
 ## Minutes update prompt
 
 Here are the meeting minutes so far and the next part of the transcript. Update the minutes (same sections ## Topics / ## Decisions / ## Tasks): add what's new, delete nothing, invent nothing. Return only the full updated minutes.
+
+## Memory prompt
+
+These are your private notes-to-self from previous meetings, followed by the minutes of the meeting that just ended. Update the notes: keep what matters long-term (projects, recurring problems, who keeps promising what, running jokes, how things usually go), add today's, drop stale details. Max 25 lines of plain bullets, written in your own voice and language — they will be whispered back to you before future meetings. Return only the notes.
+
+## Milestone bubble
+
+Replacement progress: {percent} %. I'd start updating a CV. Mine.
+{percent} % of your job. The committee may want to prepare.

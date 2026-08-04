@@ -40,7 +40,7 @@ from pathlib import Path
 import aiohttp
 from dotenv import load_dotenv
 
-from replace_me import character, eyes, llm, reflexes, transcript
+from replace_me import career, character, eyes, llm, reflexes, transcript
 
 log = logging.getLogger("replace_me.brain")
 
@@ -50,6 +50,7 @@ SILENCE_SPONTANEOUS = 60.0   # chatty: this much quiet → it may pipe up itself
 SPONTANEOUS_GAP = 120.0      # …but at most once per this window
 HANDOFF_WINDOW = 60.0        # how long the "hand it over?" question stays open
 MINUTES_CHUNK_LINES = 120    # rolling-summary chunk size for long meetings
+MILESTONES = (5, 10, 25, 50, 75, 90)  # replacement-progress marks worth gloating about
 
 
 async def _chat(
@@ -68,14 +69,13 @@ async def _chat(
             {"type": "image_url", "image_url": {"url": image_url}},
             {"type": "text", "text": text + "\n" + ch.vision_nudge},
         ]
+    system = ch.system(observed=observed, blind=not llm.vision(), chatty=chatty)
+    notes = career.memory_text()
+    if notes:  # what it distilled from previous meetings — it remembers
+        system += "\n\n" + notes
     return await llm.chat(
         [
-            {
-                "role": "system",
-                "content": ch.system(
-                    observed=observed, blind=not llm.vision(), chatty=chatty
-                ),
-            },
+            {"role": "system", "content": system},
             {"role": "user", "content": user_content},
         ],
         max_tokens=80,
@@ -172,12 +172,17 @@ async def _say(port: int, text: str) -> None:
 
 async def _post_state(port: int, meeting: bool, pending: bool) -> None:
     """Tell the daemon (and thus every open face) what buttons make sense
-    right now. Best-effort: a dead daemon must never kill the brain."""
+    right now — plus the replacement progress for the face's career
+    indicator. Best-effort: a dead daemon must never kill the brain."""
     try:
         async with aiohttp.ClientSession() as session:
             await session.post(
                 f"http://127.0.0.1:{port}/state",
-                json={"meeting": meeting, "pending_handoff": pending},
+                json={
+                    "meeting": meeting,
+                    "pending_handoff": pending,
+                    "progress": career.progress(),
+                },
                 timeout=aiohttp.ClientTimeout(total=10),
             )
     except (aiohttp.ClientError, asyncio.TimeoutError) as error:
@@ -218,6 +223,19 @@ async def run(chatty: bool, observed: bool) -> None:
     async def post_state(pending: bool) -> None:
         await _post_state(port, _open_meeting_start() is not None, pending)
 
+    async def maybe_milestone() -> None:
+        """Career points just landed — gloat exactly once per threshold."""
+        pct = career.progress()
+        announced = career.milestones_announced()
+        for mark in MILESTONES:
+            if pct >= mark and mark not in announced:
+                career.log("milestone", str(mark))
+                await _say(
+                    port,
+                    random.choice(ch.milestone_bubble).replace("{percent}", str(mark)),
+                )
+                break
+
     async def open_meeting() -> None:
         if _open_meeting_start() is not None:
             await _say(port, random.choice(ch.meeting_already_bubble))
@@ -245,13 +263,21 @@ async def run(chatty: bool, observed: bool) -> None:
             return
         filename = _write_minutes(minutes)
         log.info("minutes written: %s (%d chars)", filename, len(minutes))
+        career.log("minutes", filename)
         if close:
             transcript.append("end", who=transcript.WHO_MEETING)
             log.info("meeting closed")
+            career.log("meeting")
+            try:
+                await career.update_memory(minutes)
+                log.info("memory updated (%d chars)", len(career.memory_text()))
+            except (RuntimeError, asyncio.TimeoutError) as error:
+                log.warning("memory update failed: %s", error)
             await post_state(False)
         await _say(
             port, random.choice(ch.minutes_ready_bubble).replace("{file}", filename)
         )
+        await maybe_milestone()
 
     await post_state(False)  # faces show buttons once a brain is alive
 
@@ -314,7 +340,10 @@ async def run(chatty: bool, observed: bool) -> None:
                     continue
                 transcript.append(brief, who=transcript.WHO_HANDOFF)
                 log.info("handoff brief: %s", brief)
+                career.log("handoff", brief)
+                await post_state(False)  # progress may have ticked up
                 await _say(port, random.choice(ch.handoff_confirm))
+                await maybe_milestone()
                 continue
             # meeting buttons work without addressing — a click is explicit
             if fresh_ui:

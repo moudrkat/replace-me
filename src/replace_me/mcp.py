@@ -27,7 +27,7 @@ try:  # mcp SDK 1.x
 except ModuleNotFoundError:  # mcp SDK 2.x renamed it
     from mcp.server import MCPServer as _MCPServer
 
-from replace_me import transcript
+from replace_me import career, transcript
 
 mcp = _MCPServer("replace-me")
 
@@ -129,6 +129,27 @@ async def room_say(text: str, seconds: float = 25.0) -> str:
         return f"Refused: {len(text)} chars — the bubble takes 140 max."
     ok, body = await _post("/say", {"text": text, "seconds": seconds})
     return "Said it." if ok else f"Failed: {body}"
+
+
+@mcp.tool()
+async def room_report(text: str, seconds: float = 25.0) -> str:
+    """Report a FINISHED [HANDOFF] task back to the room: shows the bubble
+    (voice included) and logs a completed task in the avatar's career file,
+    so the replacement progress ticks up. Use this when handed-off work is
+    done and verified; use room_say for ordinary remarks.
+
+    Max 140 chars — report the outcome, not the diff.
+    """
+    text = text.strip()
+    if not text:
+        return "Refused: empty report."
+    if len(text) > 140:
+        return f"Refused: {len(text)} chars — report the outcome, not the diff."
+    ok, body = await _post("/say", {"text": text, "seconds": seconds})
+    if not ok:
+        return f"Failed: {body}"
+    career.log("handoff_done", text)
+    return f"Reported. Career file updated — replacement progress {career.progress():g} %."
 
 
 @mcp.tool()
