@@ -20,6 +20,10 @@ from replace_me import llm
 from replace_me.character import _DEFAULT_THEME
 
 KEYS = ("theme_hair", "theme_hair_light", "theme_fringe", "theme_eyes", "theme_skin")
+GEO_KEYS = ("face_hair", "face_glasses", "face_beard", "face_earring")
+GEO_ALLOWED = {"face_hair": {"long", "bob", "short", "none"},
+               "face_glasses": {"yes", "no"}, "face_beard": {"yes", "no"},
+               "face_earring": {"yes", "no"}}
 
 PROMPT = (
     "This is a portrait photo. Reply with EXACTLY five lines, nothing "
@@ -28,7 +32,12 @@ PROMPT = (
     "theme_hair_light: a lighter shade of the hair\n"
     "theme_fringe: the lightest hair highlight\n"
     "theme_eyes: the iris color\n"
-    "theme_skin: the skin tone"
+    "theme_skin: the skin tone\n"
+    "then EXACTLY four more lines describing the person:\n"
+    "face_hair: one of long|bob|short|none\n"
+    "face_glasses: yes or no\n"
+    "face_beard: yes or no\n"
+    "face_earring: yes or no"
 )
 
 _HEX_RE = re.compile(r"(theme_[a-z_]+)\s*:\s*[\"']?(#[0-9a-fA-F]{6})")
@@ -50,7 +59,11 @@ async def _decode_photo(path: Path) -> bytes:
 
 
 def _parse(reply: str) -> dict[str, str]:
-    return {key: color for key, color in _HEX_RE.findall(reply) if key in KEYS}
+    out = {key: color for key, color in _HEX_RE.findall(reply) if key in KEYS}
+    for key, val in _GEO_RE.findall(reply):
+        if key in GEO_KEYS and val in GEO_ALLOWED[key]:
+            out[key] = val
+    return out
 
 
 async def extract(path: Path) -> dict[str, str]:
@@ -72,9 +85,9 @@ async def extract(path: Path) -> dict[str, str]:
             [{"role": "user", "content": content}], max_tokens=120, temperature=0.2
         )
         colors = _parse(reply)
-        if len(colors) == len(KEYS):
+        if len(colors) >= len(KEYS) + len(GEO_KEYS):
             break
-    for key in KEYS:
+    for key in KEYS + GEO_KEYS:
         if key not in colors:
             print(f"# {key}: model gave nothing usable, keeping the default", file=sys.stderr)
             colors[key] = _DEFAULT_THEME[key]
@@ -104,6 +117,8 @@ def main() -> None:
         raise SystemExit(f"replace-me-style: {error}")
     for key in KEYS:
         print(f'{key}: "{colors[key]}"')
+    for key in GEO_KEYS:
+        print(f"{key}: {colors[key]}")
 
 
 if __name__ == "__main__":

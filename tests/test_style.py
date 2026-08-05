@@ -18,7 +18,8 @@ from replace_me.character import _DEFAULT_THEME  # noqa: E402
 
 GOOD_REPLY = (
     "theme_hair: #112233\ntheme_hair_light: #223344\ntheme_fringe: #334455\n"
-    "theme_eyes: #445566\ntheme_skin: #556677"
+    "theme_eyes: #445566\ntheme_skin: #556677\n"
+    "face_hair: short\nface_glasses: yes\nface_beard: yes\nface_earring: no"
 )
 replies: list[str] = []
 requests: list[dict] = []
@@ -48,6 +49,9 @@ async def main() -> None:
     colors = await style.extract(photo)
     check("five colors parsed", colors["theme_hair"] == "#112233"
           and colors["theme_skin"] == "#556677", str(colors))
+    check("geometry parsed from photo", colors.get("face_hair") == "short"
+          and colors.get("face_glasses") == "yes" and colors.get("face_beard") == "yes"
+          and colors.get("face_earring") == "no", str(colors))
     content = requests[0]["messages"][0]["content"]
     check("request contained the image", isinstance(content, list)
           and any(part.get("type") == "image_url" for part in content))
@@ -56,7 +60,7 @@ async def main() -> None:
     replies[:] = ["i am a poem about hair", "still a poem"]
     requests.clear()
     colors = await style.extract(photo)
-    check("garbage -> defaults", colors == {k: _DEFAULT_THEME[k] for k in style.KEYS},
+    check("garbage -> defaults", colors == {k: _DEFAULT_THEME[k] for k in style.KEYS + style.GEO_KEYS},
           str(colors))
     check("garbage was retried once", len(requests) == 2)
 
