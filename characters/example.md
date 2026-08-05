@@ -11,6 +11,7 @@ theme_hair_light: "#f096c0"
 theme_fringe: "#f7a8cc"
 theme_eyes: "#87988a"
 theme_skin: "#f2d5c2"
+theme_brow: "#c96a94"
 ui_recording: recording
 ui_disconnected: offline
 ui_meeting_start: Meeting
@@ -25,6 +26,7 @@ ui_plan_no: Rework it
 face_hair: long
 face_earring: yes
 face_glasses: no
+face_beard: no
 ---
 the colleague who was hired to eventually replace you
 

@@ -215,6 +215,7 @@ _DEFAULT_THEME = {
     "theme_fringe": "#f7a8cc",
     "theme_eyes": "#87988a",
     "theme_skin": "#f2d5c2",
+    "theme_brow": "#c96a94",
     "ui_recording": "recording",
     "ui_disconnected": "offline",
     "ui_meeting_start": "Meeting",
@@ -229,6 +230,7 @@ _DEFAULT_THEME = {
     "face_hair": "long",      # long | bob | none
     "face_earring": "yes",    # yes | no
     "face_glasses": "no",     # yes | no
+    "face_beard": "no",
 }
 
 # sections the engine consumes; anything else in the body is identity prose
@@ -351,9 +353,10 @@ class Character:
         tokens.update(self.theme)
         # friendly geometry values -> css bits the face template consumes
         hair = tokens.get("face_hair", "long")
-        tokens["face_hair_class"] = f"hair-{hair if hair in ('long', 'bob', 'none') else 'long'}"
+        tokens["face_hair_class"] = f"hair-{hair if hair in ('long', 'bob', 'short', 'none') else 'long'}"
         tokens["face_earring_css"] = "none" if tokens.get("face_earring", "yes") == "no" else "block"
         tokens["face_glasses_css"] = "block" if tokens.get("face_glasses", "no") == "yes" else "none"
+        tokens["face_beard_css"] = "block" if tokens.get("face_beard", "no") == "yes" else "none"
         return tokens
 
 

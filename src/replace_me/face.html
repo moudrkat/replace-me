@@ -12,17 +12,21 @@
     --fringe: {{theme_fringe}};
     --eyes: {{theme_eyes}};
     --skin: {{theme_skin}};
+    --brow: {{theme_brow}};
   }
   .c-hair { fill: var(--hair, #e87faf); }
   .c-hairlight { fill: var(--hair-light, #f096c0); }
   .c-fringe { fill: var(--fringe, #f7a8cc); }
   .c-iris { fill: var(--eyes, #87988a); }
   .c-skin { fill: var(--skin, #f2d5c2); }
-  .hair-long .hairset-bob { display:none; }
-  .hair-bob .hairset-long { display:none; }
-  .hair-none .hairset-long, .hair-none .hairset-bob { display:none; }
+  .c-brow { fill: var(--brow, #c96a94); }
+  .hair-long .hairset-bob, .hair-long .hairset-short { display:none; }
+  .hair-bob .hairset-long, .hair-bob .hairset-short { display:none; }
+  .hair-short .hairset-long, .hair-short .hairset-bob { display:none; }
+  .hair-none .hairset-long, .hair-none .hairset-bob, .hair-none .hairset-short { display:none; }
   #earringwrap { display: {{face_earring_css}}; }
   #glasses { display: {{face_glasses_css}}; }
+  #beard { display: {{face_beard_css}}; }
   html, body { margin:0; height:100%; background:#14161a; overflow:hidden;
     font-family:system-ui, sans-serif; }
   #stage { height:100%; display:flex; align-items:center; justify-content:center; }
@@ -117,6 +121,10 @@
              L256 470 Q258 250 252 180 L148 180 Q142 250 144 470
              L124 470 Q119 300 128 160"/>
     </g>
+    <g class="hairset-short">
+      <path class="c-hair" d="M112 200 Q104 60 200 52 Q296 60 288 200 Q290 225 282 238
+               L268 232 Q276 190 270 150 L130 150 Q124 190 132 232 L118 238 Q110 225 112 200"/>
+    </g>
     <g class="hairset-bob">
       <path class="c-hair" d="M110 150 Q95 40 200 38 Q305 40 290 150
                Q298 245 262 292 Q200 322 138 292 Q102 245 110 150"/>
@@ -153,13 +161,14 @@
       </g>
     </g>
     <!-- brows -->
-    <rect class="brow" id="browL" x="140" y="178" width="42" height="7" rx="3.5"
-          fill="#c96a94" style="transform-origin:161px 181px"/>
-    <rect class="brow" id="browR" x="218" y="178" width="42" height="7" rx="3.5"
-          fill="#c96a94" style="transform-origin:239px 181px"/>
+    <rect class="brow c-brow" id="browL" x="140" y="178" width="42" height="7" rx="3.5" style="transform-origin:161px 181px"/>
+    <rect class="brow c-brow" id="browR" x="218" y="178" width="42" height="7" rx="3.5" style="transform-origin:239px 181px"/>
     <!-- nose -->
     <path d="M197 222 q-4 14 3 18" stroke="#dcb49c" stroke-width="3"
           fill="none" stroke-linecap="round"/>
+    <!-- beard (optional) -->
+    <path id="beard" d="M125 238 Q130 296 200 309 Q270 296 275 238 Q266 276 200 285 Q134 276 125 238 Z"
+          fill="var(--brow, #c96a94)" opacity=".9"/>
     <!-- mouth -->
     <path id="mouth" d="M170 268 Q200 280 230 268" stroke="#b8556f"
           stroke-width="5" fill="none" stroke-linecap="round"/>
