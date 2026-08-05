@@ -159,7 +159,35 @@ for a Czech one), and empty means it only writes. Geometry too: `face_hair: long
 `theme_brow` for the eyebrows and beard — a grey-cropped, bearded,
 bespectacled colleague is four frontmatter lines away:
 
-![three characters from three character files: the default, a bearded engineer, a teal bob](docs/looks.png) Delete any section you don't care
+![three characters from three character files: the default, a bearded engineer, a teal bob](docs/looks.png)
+
+Left to right, the complete recipes — the default needs zero lines, the
+other two are just frontmatter:
+
+```yaml
+# the senior engineer who has seen every outage
+face_hair: short
+face_glasses: yes
+face_beard: yes
+face_earring: no
+theme_hair: "#8a8f98"
+theme_brow: "#6d727a"
+theme_skin: "#e8c9a8"
+```
+
+```yaml
+# the design lead who renames everything
+face_hair: bob
+theme_hair: "#2a9d8f"
+theme_hair_light: "#43b5a7"
+theme_fringe: "#5ecfc1"
+theme_brow: "#1f7a70"
+theme_eyes: "#3d5a80"
+```
+
+Drop lines like these into your `CHARACTER.md` frontmatter, restart the
+daemon, meet your new colleague. Or skip the typing: `replace-me-style
+photo.jpg` writes the whole block from a portrait, locally. Delete any section you don't care
 about; built-in defaults cover it. Different language? Set `language:`
 and whisper + prompts follow. No fork, no code.
 
