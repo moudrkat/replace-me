@@ -41,6 +41,7 @@ PROMPT = (
 )
 
 _HEX_RE = re.compile(r"(theme_[a-z_]+)\s*:\s*[\"']?(#[0-9a-fA-F]{6})")
+_GEO_RE = re.compile(r"(face_[a-z_]+)\s*:\s*([a-z]+)")
 
 
 async def _decode_photo(path: Path) -> bytes:
