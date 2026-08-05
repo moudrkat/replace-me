@@ -42,16 +42,21 @@ def main() -> None:
         healthy &= _check(f"{tool} on PATH", shutil.which(tool) is not None,
                           f"install ffmpeg ({why})")
 
-    mic = os.environ.get("REPLACEME_MIC", "default")
+    from replace_me.ears import _capture_args, _mic_source
+
+    mic = _mic_source()
     probe = subprocess.run(
-        ["ffmpeg", "-hide_banner", "-loglevel", "error", "-f", "pulse",
-         "-i", mic, "-t", "0.3", "-f", "null", "-"],
+        ["ffmpeg", "-hide_banner", "-loglevel", "error", *_capture_args(),
+         "-t", "0.3", "-f", "null", "-"],
         capture_output=True,
     ) if shutil.which("ffmpeg") else None
+    hint = ('list devices with `ffmpeg -f avfoundation -list_devices true -i ""`'
+            if sys.platform == "darwin"
+            else "list sources with `pactl list short sources`") + ", set REPLACEME_MIC"
     healthy &= _check(
         f"microphone (source={mic})",
         probe is not None and probe.returncode == 0,
-        "list sources with `pactl list short sources`, set REPLACEME_MIC",
+        hint,
     )
 
     try:

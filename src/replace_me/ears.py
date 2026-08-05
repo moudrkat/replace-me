@@ -15,6 +15,7 @@ import logging
 import math
 import os
 import re
+import sys
 import time
 from collections.abc import Awaitable, Callable
 
@@ -47,7 +48,21 @@ EventSink = Callable[[str, str], Awaitable[None]]
 
 
 def _mic_source() -> str:
-    return os.environ.get("REPLACEME_MIC", "default")
+    default = ":0" if sys.platform == "darwin" else "default"
+    return os.environ.get("REPLACEME_MIC", default)
+
+
+def _capture_args() -> list[str]:
+    """ffmpeg input args per platform: PulseAudio/PipeWire on Linux,
+    avfoundation on macOS (REPLACEME_MIC is the audio device index there,
+    e.g. ":0"; list devices with
+    `ffmpeg -f avfoundation -list_devices true -i ""`)."""
+    source = _mic_source()
+    if sys.platform == "darwin":
+        if not source.startswith(":"):
+            source = f":{source}"
+        return ["-f", "avfoundation", "-i", source]
+    return ["-f", "pulse", "-i", source]
 
 
 def _load_model():
@@ -108,7 +123,7 @@ async def run(sink: EventSink, muted: "asyncio.Event | None" = None) -> None:
     model = await asyncio.to_thread(_load_model)
     process = await asyncio.create_subprocess_exec(
         "ffmpeg", "-hide_banner", "-loglevel", "error",
-        "-f", "pulse", "-i", _mic_source(),
+        *_capture_args(),
         "-ac", "1", "-ar", str(RATE), "-f", "s16le", "-",
         stdout=asyncio.subprocess.PIPE,
     )
