@@ -38,12 +38,14 @@ pip install git+https://github.com/moudrkat/replace-me
 replace-me --demo        # then open http://127.0.0.1:8765/ fullscreen
 ```
 
-A scripted meeting plays out: the face listens, reacts, quips, offers to
-call its cloud self — and the replacement progress ticks up in the corner
-the whole time. When you're convinced, run `replace-me doctor` — it tells
-you exactly what your real setup is missing.
-
-![demo: a scripted meeting — the avatar reacts, quips, and the replacement progress climbs](docs/demo.gif)
+What the demo does: it plays a scripted meeting through the real
+engine — the face listens and reacts, subtitles roll, canned quips pop
+(no model is consulted), and the replacement progress ticks up in the
+corner. It runs in a throwaway temp dir, so nothing touches a real
+transcript. It looks just like the live capture above — that's the
+point: same engine, zero setup. When you're convinced, run
+`replace-me doctor` — it tells you exactly what your real setup is
+missing.
 
 ## What the replacement can do
 
