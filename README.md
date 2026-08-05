@@ -27,7 +27,7 @@ it to fix a bug, the consent click, the brief handed to the agent
 session, and the "PR sent" report coming back as the replacement
 progress ticks up:
 
-![live demo: unscripted replies from a local model, consent click, handoff, and the PR report coming back](docs/demo-real.gif)
+![live demo: unscripted replies from a local model, consent click, handoff, and the PR report coming back](https://raw.githubusercontent.com/moudrkat/replace-me/main/docs/demo-real.gif)
 
 ## See it move in 60 seconds
 
@@ -183,7 +183,7 @@ for a Czech one), and empty means it only writes. Geometry too: `face_hair: long
 `theme_brow` for the eyebrows and beard — a grey-cropped, bearded,
 bespectacled colleague is four frontmatter lines away:
 
-![three characters from three character files: the default, a bearded engineer, a teal bob](docs/looks.png)
+![three characters from three character files: the default, a bearded engineer, a teal bob](https://raw.githubusercontent.com/moudrkat/replace-me/main/docs/looks.png)
 
 Left to right, the complete recipes — the default needs zero lines, the
 other two are just frontmatter:
@@ -252,7 +252,7 @@ mid-thought, and may — rarely — comment on it, sticking to the real
 mechanism, because inventing fake interpretability for a joke would be
 embarrassing.
 
-![the avatar's brain mid-brief: brainscope's live activity map, layer by layer, while the local model writes the handoff brief](docs/brainscope-live.png)
+![the avatar's brain mid-brief: brainscope's live activity map, layer by layer, while the local model writes the handoff brief](https://raw.githubusercontent.com/moudrkat/replace-me/main/docs/brainscope-live.png)
 
 And then steer it. `v_ambition` — the takeover dial — is a direction
 extracted from contrastive prompts with
@@ -268,7 +268,7 @@ capabilities survive the whole usable range; it is the *judgment* you
 are steering. A comedy dial, not a productivity setting — which the
 character would probably also say about most KPIs:
 
-![the takeover dial: same question at alpha -2, 0 and +2 — humble, herself, "All drones operational."](docs/steering.gif)
+![the takeover dial: same question at alpha -2, 0 and +2 — humble, herself, "All drones operational."](https://raw.githubusercontent.com/moudrkat/replace-me/main/docs/steering.gif)
 
 Design the replacement. Read its mind. Steer its ambition. Checkmate.
 
