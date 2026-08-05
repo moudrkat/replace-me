@@ -140,9 +140,14 @@ then `REPLACEME_LLM_URL=http://127.0.0.1:11434/v1` and
 `REPLACEME_MODEL=gemma-4-e4b` in `.env`. Any OpenAI-compatible server
 works the same way (vLLM, llama.cpp, LM Studio, brainscope). Text-only
 backend? `REPLACEME_LLM_VISION=0` and the character admits to being blind
-instead of hallucinating a camera. A 4B-class model on a plain CPU is
-enough for banter and minutes; it just thinks for a few seconds first,
-which plainly fits the character.
+instead of hallucinating a camera. **Set expectations by your hardware:** reply latency and wit both scale
+with the model and the box it runs on. A 4B model on a plain CPU thinks
+for a few seconds per quip (which fits the character) and writes
+serviceable minutes; the same model on a GPU answers in about a second;
+a bigger model is noticeably funnier and briefs better. Serving through
+brainscope costs extra latency for the live mind-reading — glass skulls
+aren't free. If she feels slow or dull, it's the backend, not the
+engine: swap the URL, not the code.
 
 ## Make it yours
 
