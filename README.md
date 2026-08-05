@@ -129,6 +129,23 @@ replace-me-brain             # the local brain (second terminal)
 claude mcp add replace-me replace-me-mcp   # optional: plug in Claude Code
 ```
 
+**Putting your agent on room duty** (the realtime handoff): open Claude
+Code and tell it, in plain words —
+
+> Keep listening to the room with `room_listen`. Banter is the local
+> brain's job; when a `[HANDOFF]` brief arrives, that work is yours: do
+> it, and when it's done and verified, report the outcome with
+> `room_report`. You can show your steps with `room_plan`
+> (status="proposed" if you want the room to okay the approach first).
+
+That's the whole protocol. From the room's side it looks like this:
+someone says "Avatar, fix the login bug" → she asks, the room consents →
+seconds later your session picks up the brief and starts working → the
+plan card ticks on the meeting screen → "PR sent" comes back as a bubble
+and the replacement progress climbs. If no session is listening, the
+brief simply waits in the transcript — open a session later and ask it
+to check `room_recent`.
+
 **Never run a local model before?** Two commands:
 
 ```bash
