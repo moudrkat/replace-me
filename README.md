@@ -20,6 +20,13 @@ it does.
 > Disclaimer: I am of course not encouraging anyone to be replaced at
 > work by a pink-haired SVG. The thought never even crossed my mind.
 
+**Try it in two minutes** — no mic, no model, no account:
+
+```bash
+pip install replace-me-at-work
+replace-me --demo        # then open http://127.0.0.1:8765/ fullscreen
+```
+
 This is it running for real — a local Qwen3-4B (served by
 [brainscope](https://github.com/moudrkat/brainscope), so its thoughts
 were being watched the whole time) improvising replies, the room asking
@@ -29,16 +36,9 @@ progress ticks up:
 
 ![live demo: unscripted replies from a local model, consent click, handoff, and the PR report coming back](https://raw.githubusercontent.com/moudrkat/replace-me/main/docs/demo-real.gif)
 
-## See it move in 60 seconds
+## What the demo does
 
-No mic, no model, no config:
-
-```bash
-pip install replace-me-at-work
-replace-me --demo        # then open http://127.0.0.1:8765/ fullscreen
-```
-
-What the demo does: it plays a scripted meeting through the real
+It plays a scripted meeting through the real
 engine — the face listens and reacts, subtitles roll, canned quips pop
 (no model is consulted), and the replacement progress ticks up in the
 corner. It runs in a throwaway temp dir, so nothing touches a real
