@@ -34,7 +34,7 @@ progress ticks up:
 No mic, no model, no config:
 
 ```bash
-pip install git+https://github.com/moudrkat/replace-me
+pip install replace-me-at-work
 replace-me --demo        # then open http://127.0.0.1:8765/ fullscreen
 ```
 
